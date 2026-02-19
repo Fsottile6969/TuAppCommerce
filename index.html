@@ -373,19 +373,33 @@
         border-bottom: none;
       }
 
-      /* Split Screen Sale Layout */
+      /* Split Screen Sale Layout - Modal Popup */
       .sale-modal-split {
-        display: flex !important;
-        max-height: 100vh !important;
-        height: 100vh !important;
-        width: 100% !important;
-        max-width: 100% !important;
         position: fixed !important;
         inset: 0 !important;
-        top: 0 !important;
-        left: 0 !important;
-        border-radius: 0 !important;
+        background: rgba(0, 0, 0, 0.7) !important;
+        z-index: 1000 !important;
+        display: none !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 16px !important;
+      }
+
+      .sale-modal-split.active {
+        display: flex !important;
+      }
+
+      .sale-modal-split .modal-content {
+        background: white !important;
+        border-radius: 16px !important;
+        max-height: 90vh !important;
+        height: 90vh !important;
+        width: 100% !important;
+        max-width: 95vw !important;
+        display: flex !important;
         flex-direction: column !important;
+        overflow: hidden !important;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
       }
 
       .sale-scanner-section {
@@ -395,7 +409,7 @@
         overflow: hidden;
         display: flex;
         flex-direction: column;
-        border-top: 2px solid #e5e7eb;
+        border-bottom: 2px solid #e5e7eb;
       }
 
       .sale-list-section {
@@ -406,16 +420,6 @@
         overflow: hidden;
         border-radius: 0;
         order: -1;
-      }
-
-      .sale-modal-split .modal-content {
-        border-radius: 0 !important;
-        max-height: 100vh !important;
-        height: 100vh !important;
-        max-width: 100% !important;
-        width: 100% !important;
-        display: flex !important;
-        flex-direction: column !important;
       }
 
       .sale-modal-header-split {
@@ -1426,7 +1430,7 @@
       </div>
 
       <!-- Split screen layout (hidden by default) -->
-      <div id="saleSplitContainer" class="sale-modal-split hidden-section">
+      <div id="saleSplitContainer" class="sale-modal-split">
         <div class="modal-content">
           <!-- Scanner Section (Left) -->
           <div class="sale-scanner-section">
@@ -2277,7 +2281,7 @@
           // Open split view directly
           document
             .getElementById("saleSplitContainer")
-            .classList.remove("hidden-section");
+            .classList.add("active");
           this.startSaleScannerSplit();
         },
 
@@ -2292,8 +2296,7 @@
           }
           document
             .getElementById("saleSplitContainer")
-            .classList.add("hidden-section");
-          document.getElementById("saleModal").classList.remove("active");
+            .classList.remove("active");
           this.currentCart = [];
         },
 
@@ -2615,7 +2618,7 @@
           const splitContainer = document.getElementById("saleSplitContainer");
           if (
             splitContainer &&
-            !splitContainer.classList.contains("hidden-section")
+            splitContainer.classList.contains("active")
           ) {
             this.updateSplitCartUI();
           }
