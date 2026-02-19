@@ -455,19 +455,37 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        min-height: 0;
+        overflow: hidden;
+        background: #000;
       }
 
       #sale-reader {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
         width: 100% !important;
         height: 100% !important;
         overflow: hidden !important;
         border-radius: 0 !important;
+        z-index: 1 !important;
       }
 
       #sale-reader video {
         width: 100% !important;
         height: 100% !important;
         object-fit: cover !important;
+      }
+
+      #sale-reader > * {
+        width: 100% !important;
+        height: 100% !important;
+      }
+
+      /* Ensure html5-qrcode elements display correctly */
+      #sale-reader [role="main"] {
+        width: 100% !important;
+        height: 100% !important;
       }
 
       .sale-scanner-frame {
@@ -480,7 +498,7 @@
         border: 2px solid rgba(255, 255, 255, 0.5);
         border-radius: 12px;
         pointer-events: none;
-        z-index: 10;
+        z-index: 15;
         transition: all 0.3s;
       }
 
@@ -505,7 +523,7 @@
           rgba(0, 0, 0, 0.6) 100%
         );
         pointer-events: none;
-        z-index: 5;
+        z-index: 12;
       }
 
       .sale-manual-entry {
@@ -520,7 +538,7 @@
           rgba(0, 0, 0, 0.7),
           transparent
         );
-        z-index: 10;
+        z-index: 20;
         display: flex;
         flex-direction: column;
         gap: 10px;
@@ -2281,10 +2299,25 @@
 
         async startSaleScannerSplit() {
           try {
+            // Stop existing scanner if any
             if (this.scanner) {
-              await this.scanner.stop().catch(() => {});
+              try {
+                await this.scanner.stop();
+              } catch (e) {
+                console.warn("Error stopping previous scanner:", e);
+              }
             }
 
+            // Ensure the container exists and is visible
+            const container = document.getElementById("sale-reader");
+            if (!container) {
+              throw new Error("Scanner container not found");
+            }
+
+            // Give DOM time to render with proper dimensions
+            await new Promise(resolve => setTimeout(resolve, 300));
+
+            // Initialize Html5Qrcode
             this.scanner = new Html5Qrcode("sale-reader", {
               verbose: false,
               useBarCodeDetectorIfSupported: true,
@@ -2317,12 +2350,21 @@
               },
             );
 
+            console.log("Scanner started successfully");
             // Focus on manual input
-            document.getElementById("saleScannerInput").focus();
+            setTimeout(() => {
+              const input = document.getElementById("saleScannerInput");
+              if (input) input.focus();
+            }, 100);
           } catch (err) {
             console.error("Split scanner error:", err);
-            this.showError("Error al iniciar cámara: " + err.message);
-            document.getElementById("saleScannerInput").focus();
+            const errorMsg = err.message || "Error desconocido";
+            alert("Error al iniciar cámara: " + errorMsg);
+            // Still allow manual entry
+            setTimeout(() => {
+              const input = document.getElementById("saleScannerInput");
+              if (input) input.focus();
+            }, 100);
           }
         },
 
