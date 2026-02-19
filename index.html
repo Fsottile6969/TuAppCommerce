@@ -406,7 +406,7 @@
 
       .sale-scanner-section {
         flex: 1 !important;
-        background: #ff0000 !important;
+        background: #000 !important;
         position: relative !important;
         overflow: hidden !important;
         display: flex !important;
@@ -2285,12 +2285,27 @@
         openSaleModal() {
           console.log("openSaleModal() called");
           this.currentCart = [];
-          // Open split view directly
+          
+          // Get the container
           const container = document.getElementById("saleSplitContainer");
-          console.log("Container:", container);
-          console.log("Container classList before:", container.className);
-          container.classList.add("active");
-          console.log("Container classList after:", container.className);
+          console.log("Container found:", !!container);
+          
+          // Show it with style instead of just class
+          if (container) {
+            container.style.display = "flex";
+            container.style.flexDirection = "column";
+            container.style.position = "fixed";
+            container.style.top = "0";
+            container.style.left = "0";
+            container.style.right = "0";
+            container.style.bottom = "0";
+            container.style.zIndex = "2000";
+            container.style.background = "white";
+            container.style.padding = "0";
+            container.classList.add("active");
+            console.log("Container displayed with inline styles");
+          }
+          
           // Update UI
           this.updateSplitCartUI();
           this.startSaleScannerSplit();
@@ -2305,9 +2320,11 @@
           } catch (e) {
             console.error("Error stopping split scanner:", e);
           }
-          document
-            .getElementById("saleSplitContainer")
-            .classList.remove("active");
+          const container = document.getElementById("saleSplitContainer");
+          if (container) {
+            container.style.display = "none";
+            container.classList.remove("active");
+          }
           this.currentCart = [];
         },
 
