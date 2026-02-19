@@ -2283,27 +2283,14 @@
 
         // Sales
         openSaleModal() {
-          console.log("openSaleModal() called");
           this.currentCart = [];
-          
-          // Get the container
           const container = document.getElementById("saleSplitContainer");
-          console.log("Container found:", !!container);
           
-          // Show it with style instead of just class
           if (container) {
-            container.style.display = "flex";
-            container.style.flexDirection = "column";
-            container.style.position = "fixed";
-            container.style.top = "0";
-            container.style.left = "0";
-            container.style.right = "0";
-            container.style.bottom = "0";
-            container.style.zIndex = "2000";
-            container.style.background = "white";
-            container.style.padding = "0";
+            // Reset all inline styles to avoid conflicts
+            container.style.cssText = '';
+            // Use only the CSS class for display control
             container.classList.add("active");
-            console.log("Container displayed with inline styles");
           }
           
           // Update UI
@@ -2322,8 +2309,9 @@
           }
           const container = document.getElementById("saleSplitContainer");
           if (container) {
-            container.style.display = "none";
             container.classList.remove("active");
+            // Clear inline styles when closing
+            container.style.cssText = '';
           }
           this.currentCart = [];
         },
@@ -2989,8 +2977,9 @@
         },
 
         quickSale() {
-          this.navigateTo("sales");
-          setTimeout(() => this.openSaleModal(), 100);
+          console.log("quickSale() called");
+          // Open sale modal directly without navigating
+          this.openSaleModal();
         },
 
         shareTicket() {
