@@ -1537,18 +1537,9 @@
             // Sales
             openSaleModal() {
                 this.currentCart = [];
-                this.updateCartUI();
-                document.getElementById('saleModal').classList.add('active');
-                // Auto-open split view for better UX
-                this.openSplitSaleView();
-            },
-
-            openSplitSaleView() {
-                setTimeout(() => {
-                    document.getElementById('saleModal').classList.remove('active');
-                    document.getElementById('saleSplitContainer').classList.remove('hidden-section');
-                    this.startSaleScannerSplit();
-                }, 100);
+                // Open split view directly
+                document.getElementById('saleSplitContainer').classList.remove('hidden-section');
+                this.startSaleScannerSplit();
             },
 
             closeSplitSale() {
@@ -1672,6 +1663,9 @@
                 const btn = document.getElementById('splitCompleteSaleBtn');
                 const total = document.getElementById('splitCartTotal');
                 const itemCount = document.getElementById('cartItemCount');
+                
+                // Only update if elements exist (split view mode)
+                if(!container || !btn || !total) return;
                 
                 if(this.currentCart.length === 0) {
                     container.innerHTML = '<div class="text-center text-gray-400 py-8 text-sm">Carrito vacío • Escanea productos</div>';
@@ -1831,6 +1825,9 @@
                 const container = document.getElementById('cartItems');
                 const btn = document.getElementById('completeSaleBtn');
                 
+                // Only update if elements exist (regular modal mode)
+                if(!container || !btn) return;
+                
                 if(this.currentCart.length === 0) {
                     container.innerHTML = '<div class="text-center text-gray-400 py-8 text-sm">Carrito vacío • Escanea un producto</div>';
                     btn.disabled = true;
@@ -1866,7 +1863,8 @@
                 }
 
                 const total = this.currentCart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-                document.getElementById('cartTotal').textContent = this.formatMoney(total);
+                const totalEl = document.getElementById('cartTotal');
+                if(totalEl) totalEl.textContent = this.formatMoney(total);
             },
 
             incrementCart(index) {
@@ -1893,6 +1891,7 @@
                 if(confirm(`¿Eliminar "${item.name}" del carrito?`)) {
                     this.currentCart.splice(index, 1);
                     this.showError(`✓ ${item.name} eliminado`);
+                    // Update both UI contexts if they exist
                     this.updateCartUI();
                     this.updateSplitCartUI();
                 }
