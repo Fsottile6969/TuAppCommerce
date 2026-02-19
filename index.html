@@ -339,6 +339,184 @@
         .scan-history-item:last-child {
             border-bottom: none;
         }
+
+        /* Split Screen Sale Layout */
+        .sale-modal-split {
+            display: flex !important;
+            max-height: 100vh !important;
+            height: 100vh !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            position: fixed !important;
+            inset: 0 !important;
+            top: 0 !important;
+            left: 0 !important;
+            border-radius: 0 !important;
+        }
+
+        .sale-scanner-section {
+            flex: 1;
+            background: #000;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border-right: 2px solid #e5e7eb;
+        }
+
+        .sale-list-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+            overflow: hidden;
+            border-radius: 0;
+        }
+
+        .sale-modal-split .modal-content {
+            border-radius: 0 !important;
+            max-height: 100vh !important;
+            height: 100vh !important;
+            max-width: 100% !important;
+            width: 100% !important;
+            display: flex !important;
+            flex-direction: row !important;
+        }
+
+        .sale-modal-header-split {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 50%;
+            padding: 12px 16px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);
+            z-index: 20;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        .sale-modal-header-split.right {
+            left: 50%;
+            right: 0;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.98), transparent);
+            padding: 12px 16px;
+            color: #1f2937;
+        }
+
+        .sale-modal-header-split.right button {
+            color: #9ca3af;
+        }
+
+        .sale-scanner-inner {
+            position: relative;
+            width: 100%;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #sale-reader {
+            width: 100% !important;
+            height: 100% !important;
+            overflow: hidden !important;
+            border-radius: 0 !important;
+        }
+
+        #sale-reader video {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+        }
+
+        .sale-scanner-frame {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 240px;
+            height: 140px;
+            border: 2px solid rgba(255,255,255,0.5);
+            border-radius: 12px;
+            pointer-events: none;
+            z-index: 10;
+            transition: all 0.3s;
+        }
+
+        .sale-scanner-frame .scan-line {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #6366f1;
+            box-shadow: 0 0 10px #6366f1;
+            animation: scan 2s linear infinite;
+        }
+
+        .sale-scanner-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, 
+                rgba(0,0,0,0.6) 0%, 
+                rgba(0,0,0,0) 25%, 
+                rgba(0,0,0,0) 75%, 
+                rgba(0,0,0,0.6) 100%);
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .sale-manual-entry {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 16px;
+            background: linear-gradient(to top, rgba(0,0,0,0.95), rgba(0,0,0,0.7), transparent);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sale-cart-items {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .sale-cart-items::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sale-cart-items::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sale-cart-items::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 3px;
+        }
+
+        .sale-cart-footer {
+            padding: 16px;
+            border-top: 2px solid #e5e7eb;
+            background: #f9fafb;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .sale-cart-footer .btn-primary {
+            margin: 0;
+            padding: 14px 16px;
+            font-size: 15px;
+        }
     </style>
 </head>
 <body>
@@ -425,9 +603,14 @@
 
                 <div class="flex gap-2 overflow-x-auto no-scrollbar pb-2">
                     <button onclick="app.setCategory('all')" class="category-btn px-4 py-2 bg-indigo-600 text-white rounded-full text-xs font-medium whitespace-nowrap" data-cat="all">Todos</button>
-                    <button onclick="app.setCategory('electronics')" class="category-btn px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-xs font-medium whitespace-nowrap" data-cat="electronics">Electrónica</button>
-                    <button onclick="app.setCategory('food')" class="category-btn px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-xs font-medium whitespace-nowrap" data-cat="food">Alimentos</button>
-                    <button onclick="app.setCategory('other')" class="category-btn px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-xs font-medium whitespace-nowrap" data-cat="other">Otros</button>
+                    <button onclick="app.setCategory('almacen')" class="category-btn px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-xs font-medium whitespace-nowrap" data-cat="almacen">Almacén</button>
+                    <button onclick="app.setCategory('limpieza')" class="category-btn px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-xs font-medium whitespace-nowrap" data-cat="limpieza">Limpieza</button>
+                    <button onclick="app.setCategory('perfumeria')" class="category-btn px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-xs font-medium whitespace-nowrap" data-cat="perfumeria">Perfumería</button>
+                    <button onclick="app.setCategory('bebidas')" class="category-btn px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-xs font-medium whitespace-nowrap" data-cat="bebidas">Bebidas</button>
+                    <button onclick="app.setCategory('cigarrillos')" class="category-btn px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-xs font-medium whitespace-nowrap" data-cat="cigarrillos">Cigarrillos</button>
+                    <button onclick="app.setCategory('verduras')" class="category-btn px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-xs font-medium whitespace-nowrap" data-cat="verduras">Verduras</button>
+                    <button onclick="app.setCategory('lacteos')" class="category-btn px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-xs font-medium whitespace-nowrap" data-cat="lacteos">Lácteos</button>
+                    <button onclick="app.setCategory('fiambreria')" class="category-btn px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-xs font-medium whitespace-nowrap" data-cat="fiambreria">Fiambrería</button>
                 </div>
 
                 <div id="productsGrid" class="grid grid-cols-2 gap-3">
@@ -518,7 +701,7 @@
         </main>
 
         <!-- Bottom Navigation -->
-        <nav class="glass-effect border-t border-gray-200 flex-none pb-safe" style="padding: 8px 0; background: rgba(255, 255, 255, 0.98);">
+        <nav id="bottomNav" class="glass-effect border-t border-gray-200" style="padding: 8px 0; background: rgba(255, 255, 255, 0.98); position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;">
             <div class="flex justify-around items-center h-full">
                 <button onclick="app.navigateTo('dashboard')" class="bottom-nav-item active flex flex-col items-center justify-center gap-1.5 flex-1 h-20 text-gray-500 transition-colors rounded-lg mx-1" data-page="dashboard">
                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -665,9 +848,14 @@
                 <div class="mb-4">
                     <label class="block text-xs font-semibold text-gray-700 mb-2">Categoría</label>
                     <select id="productCategory" class="input-field">
-                        <option value="electronics">🔌 Electrónica</option>
-                        <option value="food">🍔 Alimentos</option>
-                        <option value="other">📦 Otros</option>
+                        <option value="almacen">🏬 Almacén</option>
+                        <option value="limpieza">🧼 Limpieza</option>
+                        <option value="perfumeria">💄 Perfumería</option>
+                        <option value="bebidas">🥤 Bebidas</option>
+                        <option value="cigarrillos">🚬 Cigarrillos</option>
+                        <option value="verduras">🥦 Verduras</option>
+                        <option value="lacteos">🥛 Lácteos</option>
+                        <option value="fiambreria">🥩 Fiambrería</option>
                     </select>
                 </div>
                 
@@ -684,7 +872,8 @@
     <!-- Sale Modal -->
     <div id="saleModal" class="modal">
             <div class="modal-content flex flex-col" style="max-height: 90vh; height: 90vh;">
-                <div class="p-4 border-b border-gray-200 flex justify-between items-center flex-none bg-gradient-to-r from-indigo-50 to-blue-50">
+                <!-- Header for normal mode -->
+                <div id="saleHeader" class="p-4 border-b border-gray-200 flex justify-between items-center flex-none bg-gradient-to-r from-indigo-50 to-blue-50">
                     <h3 class="text-lg font-bold text-gray-900">Nueva Venta</h3>
                     <button onclick="app.closeModal('saleModal')" class="text-gray-400 hover:text-gray-600 transition">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -693,13 +882,13 @@
                     </button>
                 </div>
                 
-                <div class="flex-1 overflow-y-auto p-4 space-y-3">
+                <div id="saleContent" class="flex-1 overflow-y-auto p-4 space-y-3">
                     <div id="cartItems" class="space-y-2">
                         <div class="text-center text-gray-400 py-8 text-sm">Carrito vacío • Escanea un producto</div>
                     </div>
                     
                     <div class="sticky bottom-0 bg-white pt-3 border-t border-gray-200 space-y-2">
-                        <button onclick="app.openScanner('sale')" class="w-full border-2 border-indigo-300 border-dashed rounded-xl py-3 text-indigo-600 text-sm font-medium active:bg-indigo-50 transition">
+                        <button onclick="app.openScannerInSale()" class="w-full border-2 border-indigo-300 border-dashed rounded-xl py-3 text-indigo-600 text-sm font-medium active:bg-indigo-50 transition">
                             📷 Escanear Producto
                         </button>
                         <button onclick="app.showProductSelector()" class="w-full border-2 border-gray-300 border-dashed rounded-xl py-3 text-gray-600 text-sm font-medium active:bg-gray-50 transition">
@@ -721,6 +910,77 @@
                             ✓ Completar Venta
                         </button>
                     </div>
+                </div>
+            </div>
+
+            <!-- Split screen layout (hidden by default) -->
+            <div id="saleSplitContainer" class="sale-modal-split hidden-section">
+                <div class="modal-content">
+                    <!-- Scanner Section (Left) -->
+                    <div class="sale-scanner-section">
+                        <div class="sale-modal-header-split">
+                            <h2 class="text-white font-semibold text-sm">📷 Escáner</h2>
+                            <span class="text-white/70 text-xs">Escanea para agregar productos</span>
+                        </div>
+                        
+                        <div class="sale-scanner-inner flex-1">
+                            <div id="sale-reader"></div>
+                            
+                            <div class="sale-scanner-frame">
+                                <div class="scanner-corner top-left" style="border-color: #6366f1;"></div>
+                                <div class="scanner-corner top-right" style="border-color: #6366f1;"></div>
+                                <div class="scanner-corner bottom-left" style="border-color: #6366f1;"></div>
+                                <div class="scanner-corner bottom-right" style="border-color: #6366f1;"></div>
+                                <div class="scan-line"></div>
+                            </div>
+                            
+                            <div class="sale-scanner-overlay"></div>
+                        </div>
+                        
+                        <div class="sale-manual-entry">
+                            <div class="flex gap-2 mb-2">
+                                <input type="text" id="saleScannerInput" placeholder="O escribe el código..." 
+                                    class="flex-1 bg-white/20 backdrop-blur text-white placeholder-white/50 px-3 py-2 rounded-lg border border-white/30 text-sm focus:outline-none focus:border-white/50">
+                                <button onclick="app.manualScanInSale()" class="bg-white text-gray-900 px-3 py-2 rounded-lg font-medium text-sm active:opacity-80 hover:bg-gray-100 transition">
+                                    Buscar
+                                </button>
+                            </div>
+                            <button onclick="app.closeSplitSale()" class="w-full bg-red-600 hover:bg-red-700 text-white py-2.5 rounded-lg text-sm font-medium active:bg-red-800 transition">
+                                ✕ Cerrar Venta
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Cart Section (Right) -->
+                    <div class="sale-list-section">
+                        <div class="sale-modal-header-split right">
+                            <div>
+                                <h2 class="font-semibold text-gray-900 text-sm">🛒 Carrito de Compra</h2>
+                                <p id="cartItemCount" class="text-xs text-gray-500 mt-0.5">0 productos</p>
+                            </div>
+                            <button onclick="app.closeSplitSale()" class="text-gray-400 hover:text-gray-600 transition">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <div class="sale-cart-items" id="splitCartItems">
+                            <div class="text-center text-gray-400 py-4 text-sm">Carrito vacío • Escanea productos</div>
+                        </div>
+                        
+                        <div class="sale-cart-footer">
+                            <div class="flex justify-between items-center px-2">
+                                <span class="font-bold text-gray-700">Total:</span>
+                                <span id="splitCartTotal" class="text-3xl font-bold text-indigo-600">$0.00</span>
+                            </div>
+                            <button onclick="app.completeSaleFromSplit()" id="splitCompleteSaleBtn" disabled class="w-full btn-primary" style="opacity: 0.5;">
+                                ✓ Completar Venta
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
     </div>
 
     <!-- Product Selector Modal -->
@@ -800,6 +1060,10 @@
                 this.renderProducts();
                 this.renderSales();
                 this.updateSettingsUI();
+                // Adjust bottom navigation placement according to screen
+                this.adjustBottomNav();
+                window.addEventListener('resize', () => this.adjustBottomNav());
+                window.addEventListener('orientationchange', () => this.adjustBottomNav());
                 
                 if(this.data.products.length === 0) {
                     this.addDemoData();
@@ -823,6 +1087,41 @@
                 } catch(e) {
                     this.showError('Error al guardar datos');
                 }
+            },
+
+            adjustBottomNav() {
+                // Position bottom navigation based on viewport/resolution
+                const nav = document.getElementById('bottomNav');
+                if(!nav) return;
+
+                const vh = window.innerHeight || document.documentElement.clientHeight;
+                const vw = window.innerWidth || document.documentElement.clientWidth;
+                const dpr = window.devicePixelRatio || 1;
+
+                // Basic heuristics: devices with small heights need compact nav
+                if(vh <= 640 || vw <= 360) {
+                    nav.style.height = '64px';
+                    nav.querySelectorAll('.bottom-nav-item').forEach(b => b.style.fontSize = '11px');
+                } else if(vh <= 780) {
+                    nav.style.height = '72px';
+                    nav.querySelectorAll('.bottom-nav-item').forEach(b => b.style.fontSize = '12px');
+                } else {
+                    nav.style.height = '80px';
+                    nav.querySelectorAll('.bottom-nav-item').forEach(b => b.style.fontSize = '13px');
+                }
+
+                // Ensure nav is fixed to the bottom safe area
+                nav.style.position = 'fixed';
+                nav.style.left = '0';
+                nav.style.right = '0';
+                nav.style.bottom = '0';
+                nav.style.zIndex = '60';
+
+                // If device reports safe-area-inset, apply padding
+                try {
+                    const inset = getComputedStyle(document.documentElement).getPropertyValue('--sat-inset-bottom');
+                    if(inset) nav.style.paddingBottom = inset;
+                } catch(e) {}
             },
 
             addDemoData() {
@@ -997,14 +1296,9 @@
             manualScan() {
                 const code = document.getElementById('manualBarcode').value.trim();
                 if(!code) {
-                    this.showError('❌ Ingresa un código');
+                    this.showError('Ingresa un código');
                     return;
                 }
-                if(code.length < 6) {
-                    this.showError('⚠ El código parece muy corto');
-                    return;
-                }
-                document.getElementById('manualBarcode').value = '';
                 this.handleSuccessfulScan(code);
             },
 
@@ -1143,12 +1437,16 @@
             },
 
             setCategory(cat) {
+                // Toggle active class based on selected category without relying on global event
                 document.querySelectorAll('.category-btn').forEach(btn => {
                     btn.classList.remove('bg-indigo-600', 'text-white');
                     btn.classList.add('bg-gray-200', 'text-gray-700');
                 });
-                event.target.classList.remove('bg-gray-200', 'text-gray-700');
-                event.target.classList.add('bg-indigo-600', 'text-white');
+                const target = document.querySelector(`.category-btn[data-cat="${cat}"]`);
+                if(target) {
+                    target.classList.remove('bg-gray-200', 'text-gray-700');
+                    target.classList.add('bg-indigo-600', 'text-white');
+                }
                 this.renderProducts(cat, document.getElementById('searchInput').value);
             },
 
@@ -1237,6 +1535,223 @@
                 this.currentCart = [];
                 this.updateCartUI();
                 document.getElementById('saleModal').classList.add('active');
+                // Auto-open split view for better UX
+                this.openSplitSaleView();
+            },
+
+            openSplitSaleView() {
+                setTimeout(() => {
+                    document.getElementById('saleModal').classList.remove('active');
+                    document.getElementById('saleSplitContainer').classList.remove('hidden-section');
+                    this.startSaleScannerSplit();
+                }, 100);
+            },
+
+            closeSplitSale() {
+                try {
+                    if(this.scanner) {
+                        this.scanner.stop().catch(() => {});
+                        this.scanner = null;
+                    }
+                } catch(e) {
+                    console.error('Error stopping split scanner:', e);
+                }
+                document.getElementById('saleSplitContainer').classList.add('hidden-section');
+                document.getElementById('saleModal').classList.remove('active');
+                this.currentCart = [];
+            },
+
+            async startSaleScannerSplit() {
+                try {
+                    if(this.scanner) {
+                        await this.scanner.stop().catch(() => {});
+                    }
+
+                    this.scanner = new Html5Qrcode("sale-reader", {
+                        verbose: false,
+                        useBarCodeDetectorIfSupported: true
+                    });
+
+                    const config = {
+                        fps: 15,
+                        qrbox: { width: 200, height: 120 },
+                        aspectRatio: 1.0,
+                        disableFlip: false,
+                        formatsToSupport: [
+                            Html5QrcodeSupportedFormats.EAN_13,
+                            Html5QrcodeSupportedFormats.EAN_8,
+                            Html5QrcodeSupportedFormats.UPC_A,
+                            Html5QrcodeSupportedFormats.UPC_E,
+                            Html5QrcodeSupportedFormats.CODE_128,
+                            Html5QrcodeSupportedFormats.CODE_39,
+                            Html5QrcodeSupportedFormats.ITF
+                        ]
+                    };
+
+                    await this.scanner.start(
+                        { facingMode: this.currentCamera },
+                        config,
+                        (decodedText) => {
+                            this.handleSuccessfulScanInSplit(decodedText);
+                        },
+                        (errorMessage) => {
+                            // Silently ignore scan errors
+                        }
+                    );
+
+                    // Focus on manual input
+                    document.getElementById('saleScannerInput').focus();
+
+                } catch(err) {
+                    console.error('Split scanner error:', err);
+                    this.showError('Error al iniciar cámara: ' + err.message);
+                    document.getElementById('saleScannerInput').focus();
+                }
+            },
+
+            handleSuccessfulScanInSplit(barcode) {
+                // Prevent duplicate scans
+                const now = Date.now();
+                if(this.lastScanTime && (now - this.lastScanTime) < 3500) {
+                    if(this.lastScanCode === barcode) return;
+                }
+                this.lastScanTime = now;
+                this.lastScanCode = barcode;
+
+                // Vibrate if supported
+                if(navigator.vibrate) navigator.vibrate([200, 100, 200]);
+
+                // Process barcode
+                this.processBarcodeSplit(barcode);
+            },
+
+            processBarcodeSplit(barcode) {
+                const product = this.data.products.find(p => p.barcode === barcode);
+                if(product && product.stock > 0) {
+                    this.showError(`✓ ${product.name} agregado • Stock: ${product.stock}`);
+                    this.addToCart(product);
+                    this.updateSplitCartUI();
+                    // Highlight scanner
+                    const frame = document.querySelector('.sale-scanner-frame');
+                    if(frame) {
+                        frame.style.borderColor = '#22c55e';
+                        frame.style.boxShadow = '0 0 20px rgba(34, 197, 94, 0.5)';
+                        setTimeout(() => {
+                            frame.style.borderColor = 'rgba(255,255,255,0.5)';
+                            frame.style.boxShadow = 'none';
+                        }, 500);
+                    }
+                    // Clear input
+                    document.getElementById('saleScannerInput').value = '';
+                } else if(product && product.stock === 0) {
+                    this.showError('⚠ Producto sin stock');
+                } else {
+                    this.showError('Producto no encontrado');
+                    if(confirm('¿Crear producto nuevo?')) {
+                        this.closeSplitSale();
+                        this.openProductModal(barcode);
+                    }
+                }
+            },
+
+            manualScanInSale() {
+                const code = document.getElementById('saleScannerInput').value.trim();
+                if(!code) {
+                    this.showError('Ingresa un código');
+                    return;
+                }
+                this.handleSuccessfulScanInSplit(code);
+            },
+
+            updateSplitCartUI() {
+                const container = document.getElementById('splitCartItems');
+                const btn = document.getElementById('splitCompleteSaleBtn');
+                const total = document.getElementById('splitCartTotal');
+                const itemCount = document.getElementById('cartItemCount');
+                
+                if(this.currentCart.length === 0) {
+                    container.innerHTML = '<div class="text-center text-gray-400 py-8 text-sm">Carrito vacío • Escanea productos</div>';
+                    btn.disabled = true;
+                    btn.style.opacity = '0.5';
+                    if(itemCount) itemCount.textContent = '0 productos';
+                } else {
+                    const totalItems = this.currentCart.reduce((sum, item) => sum + item.quantity, 0);
+                    if(itemCount) itemCount.textContent = `${totalItems} ${totalItems === 1 ? 'producto' : 'productos'}`;
+                    
+                    container.innerHTML = this.currentCart.map((item, index) => {
+                        const product = this.data.products.find(p => p.barcode === item.barcode);
+                        const maxStock = product?.stock || 0;
+                        const subtotal = item.price * item.quantity;
+                        return `
+                        <div class="p-3 bg-white border border-gray-200 rounded-lg transition-all hover:shadow-md hover:border-indigo-300">
+                            <div class="flex justify-between items-start mb-2">
+                                <div class="flex-1 min-w-0">
+                                    <div class="font-semibold text-sm text-gray-900 truncate">${item.name}</div>
+                                    <div class="text-xs text-gray-500 mt-0.5">${this.formatMoney(item.price)} c/u</div>
+                                </div>
+                                <button onclick="app.removeFromCart(${index})" class="text-red-500 hover:bg-red-50 p-2 rounded transition ml-2 flex-shrink-0" title="Eliminar producto">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="flex items-center gap-2 justify-between">
+                                <div class="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+                                    <button onclick="app.decrementCart(${index})" class="px-2 py-1 bg-gray-200 rounded text-xs font-bold hover:bg-gray-300 disabled:opacity-50" ${item.quantity <= 1 ? 'disabled' : ''} title="Disminuir cantidad">−</button>
+                                    <span class="text-xs font-bold w-6 text-center">${item.quantity}</span>
+                                    <button onclick="app.incrementCart(${index})" class="px-2 py-1 bg-gray-200 rounded text-xs font-bold hover:bg-gray-300 disabled:opacity-50" ${item.quantity >= maxStock ? 'disabled' : ''} title="Aumentar cantidad">+</button>
+                                </div>
+                                <span class="font-bold text-indigo-600 text-sm">${this.formatMoney(subtotal)}</span>
+                            </div>
+                        </div>
+                    `}).join('');
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                }
+
+                const cartTotal = this.currentCart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                total.textContent = this.formatMoney(cartTotal);
+            },
+
+            completeSaleFromSplit() {
+                if(this.currentCart.length === 0) {
+                    this.showError('❌ Carrito vacío');
+                    return;
+                }
+
+                const total = this.currentCart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                
+                if(!confirm(`¿Completar venta por ${this.formatMoney(total)}?`)) {
+                    return;
+                }
+
+                const sale = {
+                    id: Date.now(),
+                    items: [...this.currentCart],
+                    total: total,
+                    date: new Date().toISOString()
+                };
+
+                // Update product stock
+                this.currentCart.forEach(item => {
+                    const product = this.data.products.find(p => p.barcode === item.barcode);
+                    if(product) product.stock -= item.quantity;
+                });
+
+                this.data.sales.push(sale);
+                this.saveData();
+                
+                this.closeSplitSale();
+                this.currentCart = [];
+                this.showTicket(sale);
+                this.updateDashboard();
+                this.renderProducts();
+            },
+
+            openScannerInSale() {
+                // This opens the scanner in the regular modal (fallback)
+                this.scanMode = 'sale';
+                document.getElementById('saleModal').classList.add('active');
             },
 
             showProductSelector() {
@@ -1301,6 +1816,11 @@
                     this.currentCart.push({...product, quantity: 1});
                 }
                 this.updateCartUI();
+                // Also update split view if it's visible
+                const splitContainer = document.getElementById('saleSplitContainer');
+                if(splitContainer && !splitContainer.classList.contains('hidden-section')) {
+                    this.updateSplitCartUI();
+                }
             },
 
             updateCartUI() {
@@ -1351,6 +1871,7 @@
                 if(product && item.quantity < product.stock) {
                     item.quantity++;
                     this.updateCartUI();
+                    this.updateSplitCartUI();
                 }
             },
 
@@ -1359,6 +1880,7 @@
                 if(item.quantity > 1) {
                     item.quantity--;
                     this.updateCartUI();
+                    this.updateSplitCartUI();
                 }
             },
 
@@ -1368,6 +1890,7 @@
                     this.currentCart.splice(index, 1);
                     this.showError(`✓ ${item.name} eliminado`);
                     this.updateCartUI();
+                    this.updateSplitCartUI();
                 }
             },
 
