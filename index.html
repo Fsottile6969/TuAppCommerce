@@ -376,7 +376,10 @@
       /* Split Screen Sale Layout - Full Screen */
       .sale-modal-split {
         position: fixed !important;
-        inset: 0 !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
         background: white !important;
         z-index: 2000 !important;
         display: none !important;
@@ -2384,24 +2387,31 @@
             container.style.cssText = `
               display: flex !important;
               flex-direction: column !important;
-              width: ${screenWidth}px !important;
-              height: ${screenHeight}px !important;
+              width: 100vw !important;
+              height: 100vh !important;
               position: fixed !important;
               top: 0 !important;
               left: 0 !important;
-              right: 0 !important;
-              bottom: 0 !important;
               z-index: 2000 !important;
               background-color: white !important;
               padding: 0 !important;
               margin: 0 !important;
               border: none !important;
               overflow: hidden !important;
+              visibility: visible !important;
+              pointer-events: auto !important;
             `.trim();
             
             console.log(`Modal activado - Dimensiones forzadas (${screenWidth}px x ${screenHeight}px)`);
             
-            // Forzar reflow
+            // Forzar reflow agresivo
+            void container.offsetHeight;
+            void container.offsetWidth;
+            
+            // Forzar recalculación con toggle
+            container.style.display = 'none';
+            void container.offsetHeight;
+            container.style.display = 'flex';
             void container.offsetHeight;
             
             // Actualizar UI primero
@@ -2427,6 +2437,42 @@
                   min-height: 0 !important;
                   width: 100% !important;
                   height: 100% !important;
+                `.trim();
+              }
+              
+              // Forzar sale-scanner-section
+              let scannerSection = container.querySelector('.sale-scanner-section');
+              if (scannerSection) {
+                scannerSection.style.cssText = `
+                  flex: 1 !important;
+                  display: flex !important;
+                  flex-direction: column !important;
+                  min-height: 0 !important;
+                  width: 65% !important;
+                  height: 100% !important;
+                  overflow: hidden !important;
+                  background: black !important;
+                  position: relative !important;
+                `.trim();
+              }
+              
+              // Forzar sale-list-section
+              const listSection = container.querySelector('.sale-list-section');
+              if (listSection) {
+                listSection.style.cssText = `
+                  flex: 0 0 35% !important;
+                  display: flex !important;
+                  flex-direction: column !important;
+                  min-height: 0 !important;
+                  width: 35% !important;
+                  height: 100% !important;
+                  overflow: hidden !important;
+                  background: white !important;
+                `.trim();
+              }
+              
+              this.startSaleScannerSplit();
+            }, 500);
                 `.trim();
               }
               
@@ -2521,17 +2567,21 @@
                 console.log("⚠️ Contenedor padre tiene 0 dimensiones, forzando con píxeles...");
                 const screenWidth = window.innerWidth;
                 const screenHeight = window.innerHeight;
-                Object.assign(parentContainer.style, {
-                  display: 'flex',
-                  flexDirection: 'row',
-                  width: screenWidth + 'px',
-                  height: screenHeight + 'px',
-                  position: 'fixed',
-                  top: '0',
-                  left: '0',
-                  zIndex: '2000',
-                  overflow: 'hidden'
-                });
+                parentContainer.style.cssText = `
+                  display: flex !important;
+                  flex-direction: column !important;
+                  width: 100vw !important;
+                  height: 100vh !important;
+                  position: fixed !important;
+                  top: 0 !important;
+                  left: 0 !important;
+                  z-index: 2000 !important;
+                  background: white !important;
+                  overflow: hidden !important;
+                  visibility: visible !important;
+                  pointer-events: auto !important;
+                `.trim();
+                console.log("✓ Estilos forzados al contenedor padre");
                 void parentContainer.offsetHeight; // reflow
               }
             }
