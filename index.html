@@ -376,10 +376,7 @@
       /* Split Screen Sale Layout - Full Screen */
       .sale-modal-split {
         position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        bottom: 0 !important;
+        inset: 0 !important;
         background: white !important;
         z-index: 2000 !important;
         display: none !important;
@@ -390,6 +387,8 @@
       .sale-modal-split.active {
         display: flex !important;
         flex-direction: column !important;
+        width: 100% !important;
+        height: 100% !important;
       }
 
       .sale-modal-split.active .modal-content {
