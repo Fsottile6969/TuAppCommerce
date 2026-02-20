@@ -1901,7 +1901,21 @@
             );
           } catch (err) {
             console.error("Scanner error:", err);
-            const errorMsg = (typeof err === 'string' ? err : (err?.message || JSON.stringify(err) || "Error desconocido"));
+            let errorMsg = "Error desconocido";
+            
+            // Handle specific error types
+            if (err?.name === 'NotAllowedError' || err?.toString().includes('NotAllowedError')) {
+              errorMsg = "Permiso denegado. Por favor, permite el acceso a la cámara en los ajustes del navegador o intenta nuevamente.";
+            } else if (err?.name === 'NotFoundError' || err?.toString().includes('NotFoundError')) {
+              errorMsg = "No se encontró cámara en el dispositivo.";
+            } else if (typeof err === 'string') {
+              errorMsg = err;
+            } else if (err?.message) {
+              errorMsg = err.message;
+            } else {
+              errorMsg = JSON.stringify(err);
+            }
+            
             this.showError("Error al iniciar cámara: " + errorMsg);
             // Show manual entry as fallback
             document.getElementById("manualBarcode").focus();
@@ -2477,7 +2491,21 @@
             }, 100);
           } catch (err) {
             console.error("✗ Error al iniciar scanner:", err);
-            const errorMsg = (typeof err === 'string' ? err : (err?.message || JSON.stringify(err) || "Error desconocido"));
+            let errorMsg = "Error desconocido";
+            
+            // Handle specific error types
+            if (err?.name === 'NotAllowedError' || err?.toString().includes('NotAllowedError')) {
+              errorMsg = "Permiso denegado.\n\n¿Cómo permitir acceso a la cámara?\n\n1. Haz clic en el ícono del candado en la barra de direcciones\n2. Busca 'Cámara' y selecciona 'Permitir'\n3. Recarga la página\n\nO usa entrada manual de códigos como alternativa.";
+            } else if (err?.name === 'NotFoundError' || err?.toString().includes('NotFoundError')) {
+              errorMsg = "No se encontró cámara en el dispositivo. Usa la entrada manual de códigos.";
+            } else if (typeof err === 'string') {
+              errorMsg = err;
+            } else if (err?.message) {
+              errorMsg = err.message;
+            } else {
+              errorMsg = JSON.stringify(err);
+            }
+            
             alert("Error al iniciar cámara: " + errorMsg);
             // Still allow manual entry
             setTimeout(() => {
