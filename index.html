@@ -427,7 +427,7 @@
         overflow: hidden !important;
         display: flex !important;
         flex-direction: column !important;
-        height: auto !important;
+        min-height: 0 !important;
         order: 2 !important;
       }
 
@@ -461,16 +461,16 @@
       }
 
       .sale-modal-split.active .sale-scanner-inner {
-        position: relative;
-        width: 100%;
-        flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 300px;
-        height: 100%;
-        overflow: hidden;
-        background: #000;
+        position: relative !important;
+        width: 100% !important;
+        height: 100% !important;
+        flex: 1 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-height: 300px !important;
+        overflow: hidden !important;
+        background: #000 !important;
       }
 
       #sale-reader {
