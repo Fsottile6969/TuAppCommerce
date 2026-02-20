@@ -2473,42 +2473,6 @@
               
               this.startSaleScannerSplit();
             }, 500);
-                `.trim();
-              }
-              
-              // Forzar sale-scanner-section
-              const scannerSection = container.querySelector('.sale-scanner-section');
-              if (scannerSection) {
-                scannerSection.style.cssText = `
-                  flex: 1 !important;
-                  display: flex !important;
-                  flex-direction: column !important;
-                  min-height: 0 !important;
-                  width: 65% !important;
-                  height: 100% !important;
-                  overflow: hidden !important;
-                  background: black !important;
-                  position: relative !important;
-                `.trim();
-              }
-              
-              // Forzar sale-list-section
-              const listSection = container.querySelector('.sale-list-section');
-              if (listSection) {
-                listSection.style.cssText = `
-                  flex: 0 0 35% !important;
-                  display: flex !important;
-                  flex-direction: column !important;
-                  min-height: 0 !important;
-                  width: 35% !important;
-                  height: 100% !important;
-                  overflow: hidden !important;
-                  background: white !important;
-                `.trim();
-              }
-              
-              this.startSaleScannerSplit();
-            }, 500);
             
           } else {
             console.error("Container NO encontrado!");
