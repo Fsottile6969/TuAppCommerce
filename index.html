@@ -2646,8 +2646,7 @@
             console.log(`Contenedor sale-reader forzado: ${scannerWidth}px x ${scannerHeight}px`);
 
             // Also force parent containers
-            const scannerSection = document.querySelector(".sale-scanner-section");
-            const scannerInner = document.querySelector(".sale-scanner-inner");
+            let scannerInner = document.querySelector(".sale-scanner-inner");
             
             if (scannerSection) {
               scannerSection.style.cssText = `
