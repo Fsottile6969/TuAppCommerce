@@ -2404,8 +2404,7 @@
           const scannerSection = document.createElement("div");
           scannerSection.style.cssText = `
             flex: 0 0 65% !important;
-            display: flex !important;
-            flex-direction: column !important;
+            display: block !important;
             background: black !important;
             padding: 0 !important;
             margin: 0 !important;
@@ -2419,9 +2418,7 @@
           scannerInner.className = "sale-scanner-inner";
           scannerInner.style.cssText = `
             flex: 1 !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
+            display: block !important;
             background: black !important;
             overflow: hidden !important;
             width: ${scannerWidth}px !important;
@@ -2434,10 +2431,10 @@
           readerDiv.style.cssText = `
             width: ${scannerWidth}px !important;
             height: ${scannerHeight}px !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
+            display: block !important;
             background: black !important;
+            position: relative !important;
+            overflow: hidden !important;
           `.trim();
           
           scannerInner.appendChild(readerDiv);
@@ -2585,10 +2582,28 @@
             }
             console.log("sale-reader encontrado");
 
+            // Verificar dimensiones del contenedor ANTES de inicializar
+            const rect = container.getBoundingClientRect();
+            const offsetW = container.offsetWidth;
+            const offsetH = container.offsetHeight;
+            console.log("Dimensiones ANTES de html5qrcode - getBoundingClientRect:", Math.round(rect.width), "x", Math.round(rect.height), " | offsetWidth/Height:", offsetW, "x", offsetH);
+            
+            // Si tiene 0x0, forzar dimensiones explícitas
+            if (offsetW === 0 || offsetH === 0) {
+              const scannerWidth = window.innerWidth * 0.65;
+              const scannerHeight = window.innerHeight;
+              console.log("⚠️ Contenedor tiene 0 dimensiones, forzando:", scannerWidth, "x", scannerHeight);
+              container.style.cssText = `
+                width: ${scannerWidth}px !important;
+                height: ${scannerHeight}px !important;
+                display: block !important;
+                background: black !important;
+              `.trim();
+            }
+
             // Limpiar contenedor
             container.innerHTML = '';
             
-            // El contenedor ya tiene el tamaño correcto desde openSaleModal()
             console.log("Inicializando Html5Qrcode...");
             // Initialize Html5Qrcode
             this.scanner = new Html5Qrcode("sale-reader", {
@@ -2628,12 +2643,36 @@
             // Esperar a que el video se renderice
             await new Promise(resolve => setTimeout(resolve, 500));
             
-            // Verificar que el video está visible
+            // Obtener el video creado por html5-qrcode
             const video = document.querySelector("#sale-reader video");
+            const readerContainer = document.getElementById("sale-reader");
+            
             console.log("Video element found:", !!video);
             if (video) {
               console.log("Video display:", window.getComputedStyle(video).display);
-              console.log("Video dimensions:", video.offsetWidth, "x", video.offsetHeight);
+              console.log("Video dimensions ANTES:", video.offsetWidth, "x", video.offsetHeight);
+              
+              // Forzar dimensiones del video a píxeles explícitos
+              const scannerWidth = window.innerWidth * 0.65;
+              const scannerHeight = window.innerHeight;
+              
+              video.style.cssText = `
+                width: ${scannerWidth}px !important;
+                height: ${scannerHeight}px !important;
+                display: block !important;
+                object-fit: cover !important;
+              `.trim();
+              
+              // Esperar a que se aplique
+              await new Promise(resolve => setTimeout(resolve, 200));
+              console.log("Video dimensions DESPUÉS:", video.offsetWidth, "x", video.offsetHeight);
+            }
+            
+            // También verificar el contenedor
+            if (readerContainer) {
+              const rect = readerContainer.getBoundingClientRect();
+              console.log("Reader container getBoundingClientRect:", Math.round(rect.width), "x", Math.round(rect.height));
+              console.log("Reader container offsetWidth/Height:", readerContainer.offsetWidth, "x", readerContainer.offsetHeight);
             }
 
             console.log("✓✓✓ Scanner iniciado exitosamente - LISTO");
