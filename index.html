@@ -2396,6 +2396,10 @@
             overflow: hidden !important;
           `.trim();
           
+          // Calcular dimensiones
+          const scannerWidth = window.innerWidth * 0.65;
+          const scannerHeight = window.innerHeight;
+          
           // Scanner section (65%)
           const scannerSection = document.createElement("div");
           scannerSection.style.cssText = `
@@ -2406,6 +2410,8 @@
             padding: 0 !important;
             margin: 0 !important;
             overflow: hidden !important;
+            width: ${scannerWidth}px !important;
+            height: ${scannerHeight}px !important;
           `.trim();
           
           // Scanner inner
@@ -2418,14 +2424,16 @@
             justify-content: center !important;
             background: black !important;
             overflow: hidden !important;
+            width: ${scannerWidth}px !important;
+            height: ${scannerHeight}px !important;
           `.trim();
           
           // Reader div
           const readerDiv = document.createElement("div");
           readerDiv.id = "sale-reader";
           readerDiv.style.cssText = `
-            width: 100% !important;
-            height: 100% !important;
+            width: ${scannerWidth}px !important;
+            height: ${scannerHeight}px !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
