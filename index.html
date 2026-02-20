@@ -2333,8 +2333,17 @@
               throw new Error("Scanner container not found");
             }
 
-            // Give DOM time to render with proper dimensions
-            await new Promise(resolve => setTimeout(resolve, 300));
+            // Wait for DOM to render with proper dimensions
+            let attempts = 0;
+            while (attempts < 10) {
+              const rect = container.getBoundingClientRect();
+              if (rect.height > 50 && rect.width > 50) {
+                console.log("Container dimensions ready", rect.width, "x", rect.height);
+                break;
+              }
+              await new Promise(resolve => setTimeout(resolve, 100));
+              attempts++;
+            }
 
             // Initialize Html5Qrcode
             this.scanner = new Html5Qrcode("sale-reader", {
@@ -2369,7 +2378,7 @@
               },
             );
 
-            console.log("Scanner started successfully");
+            console.log("Scanner started successfully in split mode");
             // Focus on manual input
             setTimeout(() => {
               const input = document.getElementById("saleScannerInput");
