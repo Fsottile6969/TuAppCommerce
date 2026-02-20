@@ -2537,7 +2537,7 @@
             console.log("sale-reader encontrado");
             
             // Forzar sale-scanner-inner
-            const scannerInner = container.parentElement;
+            let scannerInner = container.parentElement;
             if (scannerInner && scannerInner.classList.contains('sale-scanner-inner')) {
               const scannerWidth = window.innerWidth * 0.65; // 65% para scanner
               const scannerHeight = window.innerHeight;
@@ -2552,9 +2552,8 @@
                 position: 'relative'
               });
             }
-
             // Verificar el contenedor padre también
-            const scannerSection = document.querySelector(".sale-scanner-section");
+            let scannerSection = document.querySelector(".sale-scanner-section");
             if (scannerSection) {
               const sectionRect = scannerSection.getBoundingClientRect();
               const sectionDisplay = window.getComputedStyle(scannerSection).display;
