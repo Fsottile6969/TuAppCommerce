@@ -380,10 +380,13 @@
         left: 0 !important;
         right: 0 !important;
         bottom: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
         background: white !important;
         z-index: 2000 !important;
         display: none !important;
         padding: 0 !important;
+        margin: 0 !important;
       }
 
       .sale-modal-split.active {
@@ -394,14 +397,15 @@
       .sale-modal-split .modal-content {
         background: white !important;
         border-radius: 0 !important;
-        max-height: 100vh !important;
         height: 100vh !important;
-        width: 100% !important;
-        max-width: 100% !important;
+        width: 100vw !important;
+        max-width: 100vw !important;
         display: flex !important;
         flex-direction: column !important;
         overflow: hidden !important;
         box-shadow: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
       }
 
       .sale-list-section {
@@ -2299,12 +2303,41 @@
           const container = document.getElementById("saleSplitContainer");
           
           if (container) {
-            console.log("Container encontrado");
+            console.log("Container encontrado, agregando clase active");
             container.style.cssText = '';
             container.classList.add("active");
-            console.log("Clase 'active' agregada");
+            
+            // Forzar dimensiones explícitamente
+            container.style.display = 'flex';
+            container.style.flexDirection = 'column';
+            container.style.position = 'fixed';
+            container.style.top = '0';
+            container.style.left = '0';
+            container.style.right = '0';
+            container.style.bottom = '0';
+            container.style.width = '100vw';
+            container.style.height = '100vh';
+            container.style.zIndex = '2000';
+            
+            console.log("Estilos inline establecidos");
+            
+            // Dar tiempo al navegador para renderizar
+            setTimeout(() => {
+              const scannerSection = container.querySelector(".sale-scanner-section");
+              if (scannerSection) {
+                console.log("Configurando sale-scanner-section...");
+                scannerSection.style.height = '55vh';
+                scannerSection.style.minHeight = '55vh';
+              }
+              
+              const readerContainer = document.getElementById("sale-reader");
+              if (readerContainer) {
+                const rect = readerContainer.getBoundingClientRect();
+                console.log("sale-reader dimensiones después del layout:", rect.width, "x", rect.height);
+              }
+            }, 100);
           } else {
-            console.error("Container NO encontrado! No existe #saleSplitContainer");
+            console.error("Container NO encontrado!");
           }
           
           this.updateSplitCartUI();
@@ -2348,25 +2381,25 @@
             if (!container) {
               throw new Error("Scanner container 'sale-reader' not found");
             }
-            console.log("Container encontrado:", container);
+            console.log("Container encontrado");
 
             // Verificar el contenedor padre también
             const scannerSection = document.querySelector(".sale-scanner-section");
             if (scannerSection) {
               const sectionRect = scannerSection.getBoundingClientRect();
-              console.log("sale-scanner-section dimensiones:", sectionRect.width, "x", sectionRect.height);
+              console.log("sale-scanner-section dimensiones actuales:", Math.round(sectionRect.width), "x", Math.round(sectionRect.height));
             }
 
-            // Wait for DOM to render with proper dimensions
+            // Wait for DOM to render with proper dimensions - más intentos y más tiempo
             let attempts = 0;
             let hasGoodDimensions = false;
-            while (attempts < 30) {
+            while (attempts < 50) {
               const rect = container.getBoundingClientRect();
-              if (attempts % 5 === 0) {
+              if (attempts % 10 === 0) {
                 console.log(`Intento ${attempts + 1}: sale-reader = ${Math.round(rect.width)}x${Math.round(rect.height)}`);
               }
-              if (rect.height > 100 && rect.width > 100) {
-                console.log("✓ Container dimensions ready:", Math.round(rect.width), "x", Math.round(rect.height));
+              if (rect.height > 200 && rect.width > 200) {
+                console.log("✓ Container tiene buenas dimensiones:", Math.round(rect.width), "x", Math.round(rect.height));
                 hasGoodDimensions = true;
                 break;
               }
@@ -2374,13 +2407,11 @@
               attempts++;
             }
 
-            if (!hasGoodDimensions) {
-              const rect = container.getBoundingClientRect();
-              console.warn("Aviso: Container aún tiene dimensiones pequeñas:", Math.round(rect.width), "x", Math.round(rect.height));
-            }
+            const finalRect = container.getBoundingClientRect();
+            console.log("Dimensiones finales de sale-reader:", Math.round(finalRect.width), "x", Math.round(finalRect.height));
 
             // Force layout recalculation
-            await new Promise(resolve => setTimeout(resolve, 200));
+            await new Promise(resolve => setTimeout(resolve, 300));
 
             console.log("Inicializando Html5Qrcode...");
             // Initialize Html5Qrcode
@@ -2405,7 +2436,7 @@
               ],
             };
 
-            console.log("Iniciando cámara con cámara:", this.currentCamera);
+            console.log("Iniciando cámara con:", this.currentCamera);
             await this.scanner.start(
               { facingMode: this.currentCamera },
               config,
@@ -2418,7 +2449,7 @@
               },
             );
 
-            console.log("✓✓ Scanner iniciado exitosamente en modo split");
+            console.log("✓✓ Scanner iniciado exitosamente");
             // Focus on manual input
             setTimeout(() => {
               const input = document.getElementById("saleScannerInput");
