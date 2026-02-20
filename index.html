@@ -404,6 +404,19 @@
         box-shadow: none !important;
       }
 
+      .sale-list-section {
+        flex: 0 0 auto !important;
+        max-height: 45% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        background: #fff !important;
+        overflow: hidden !important;
+        border-radius: 0 !important;
+        border-bottom: 2px solid #e5e7eb !important;
+        min-height: 0 !important;
+        order: 1 !important;
+      }
+
       .sale-scanner-section {
         flex: 1 !important;
         background: #000 !important;
@@ -411,19 +424,8 @@
         overflow: hidden !important;
         display: flex !important;
         flex-direction: column !important;
-        border-bottom: 2px solid #e5e7eb !important;
         min-height: 0 !important;
-      }
-
-      .sale-list-section {
-        flex: 1 !important;
-        display: flex !important;
-        flex-direction: column !important;
-        background: #fff !important;
-        overflow: hidden !important;
-        border-radius: 0 !important;
-        order: -1 !important;
-        min-height: 0 !important;
+        order: 2 !important;
       }
 
       .sale-modal-header-split {
@@ -432,30 +434,27 @@
         left: 0;
         right: 0;
         padding: 12px 16px;
-        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), transparent);
+        background: linear-gradient(to bottom, rgba(255, 255, 255, 0.98), transparent);
         z-index: 20;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        color: white;
+        color: #1f2937;
+        flex-shrink: 0;
       }
 
       .sale-modal-header-split.right {
         left: 0;
         right: 0;
-        background: linear-gradient(
-          to bottom,
-          rgba(255, 255, 255, 0.98),
-          transparent
-        );
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), transparent);
         padding: 12px 16px;
-        color: #1f2937;
+        color: white;
         position: relative;
         top: 0;
       }
 
       .sale-modal-header-split.right button {
-        color: #9ca3af;
+        color: #fff;
       }
 
       .sale-scanner-inner {
@@ -465,7 +464,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        min-height: 0;
+        min-height: 300px;
         overflow: hidden;
         background: #000;
       }
@@ -561,6 +560,7 @@
         display: flex;
         flex-direction: column;
         gap: 8px;
+        min-height: 0;
       }
 
       .sale-cart-items::-webkit-scrollbar {
