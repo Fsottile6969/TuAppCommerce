@@ -2404,37 +2404,33 @@
           const scannerSection = document.createElement("div");
           scannerSection.style.cssText = `
             flex: 0 0 65% !important;
-            display: block !important;
+            display: flex !important;
+            flex-direction: column !important;
             background: black !important;
             padding: 0 !important;
             margin: 0 !important;
             overflow: hidden !important;
             width: ${scannerWidth}px !important;
             height: ${scannerHeight}px !important;
+            min-height: ${scannerHeight}px !important;
+            position: relative !important;
           `.trim();
           
-          // Scanner inner
-          const scannerInner = document.createElement("div");
-          scannerInner.className = "sale-scanner-inner";
-          scannerInner.style.cssText = `
-            flex: 1 !important;
-            display: block !important;
-            background: black !important;
-            overflow: hidden !important;
-            width: ${scannerWidth}px !important;
-            height: ${scannerHeight}px !important;
-          `.trim();
-          
-          // Reader div
+          // Reader div - DIRECTAMENTE en scannerSection, sin intermediario
           const readerDiv = document.createElement("div");
           readerDiv.id = "sale-reader";
           readerDiv.style.cssText = `
             width: ${scannerWidth}px !important;
             height: ${scannerHeight}px !important;
-            display: block !important;
+            display: flex !important;
+            flex: 1 !important;
+            align-items: center !important;
+            justify-content: center !important;
             background: black !important;
             position: relative !important;
             overflow: hidden !important;
+            margin: 0 !important;
+            padding: 0 !important;
           `.trim();
           
           scannerInner.appendChild(readerDiv);
