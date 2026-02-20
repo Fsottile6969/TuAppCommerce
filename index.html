@@ -473,19 +473,24 @@
         overflow: hidden !important;
         border-radius: 0 !important;
         z-index: 1 !important;
-        display: flex !important;
-        flex: 1 !important;
+        position: relative !important;
       }
 
       .sale-modal-split.active #sale-reader {
         width: 100% !important;
         height: 100% !important;
-        flex: 1 !important;
         overflow: hidden !important;
         border-radius: 0 !important;
         z-index: 1 !important;
-        display: flex !important;
-        min-height: 0 !important;
+        position: relative !important;
+      }
+      
+      #sale-reader video,
+      #sale-reader canvas,
+      #sale-reader > * {
+        width: 100% !important;
+        height: 100% !important;
+        display: block !important;
       }
 
       #sale-reader video {
@@ -503,6 +508,19 @@
       #sale-reader [role="main"] {
         width: 100% !important;
         height: 100% !important;
+      }
+      
+      #sale-reader video {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        display: block !important;
+      }
+      
+      #sale-reader canvas {
+        width: 100% !important;
+        height: 100% !important;
+        display: block !important;
       }
 
       .sale-scanner-frame {
@@ -2447,6 +2465,17 @@
             // Force layout recalculation
             await new Promise(resolve => setTimeout(resolve, 200));
 
+            // Limpiar completamente el contenedor antes de inicializar
+            console.log("Limpiando contenedor sale-reader...");
+            const readerDiv = document.getElementById("sale-reader");
+            readerDiv.innerHTML = '';
+            
+            // Asegurar estilos correctos
+            readerDiv.style.width = '100%';
+            readerDiv.style.height = '100%';
+            readerDiv.style.position = 'relative';
+            readerDiv.style.overflow = 'hidden';
+
             console.log("Inicializando Html5Qrcode...");
             // Initialize Html5Qrcode
             this.scanner = new Html5Qrcode("sale-reader", {
@@ -2482,6 +2511,17 @@
                 // Silently ignore scan errors
               },
             );
+            
+            // Esperar a que el video se renderice
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            // Verificar que el video está visible
+            const video = document.querySelector("#sale-reader video");
+            console.log("Video element found:", !!video);
+            if (video) {
+              console.log("Video display:", window.getComputedStyle(video).display);
+              console.log("Video dimensions:", video.offsetWidth, "x", video.offsetHeight);
+            }
 
             console.log("✓✓✓ Scanner iniciado exitosamente - LISTO");
             // Focus on manual input
