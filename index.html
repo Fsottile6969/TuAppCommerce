@@ -2377,12 +2377,15 @@
             container.style.cssText = '';
             container.classList.add("active");
             
-            // Forzar dimensiones de forma más agresiva
+            // Forzar dimensiones usando PÍXELES ABSOLUTOS
+            const screenWidth = window.innerWidth;
+            const screenHeight = window.innerHeight;
+            
             const styles = {
               display: 'flex',
               flexDirection: 'row',
-              width: '100vw',
-              height: '100vh',
+              width: screenWidth + 'px',
+              height: screenHeight + 'px',
               position: 'fixed',
               top: '0',
               left: '0',
@@ -2398,7 +2401,7 @@
             
             Object.assign(container.style, styles);
             
-            console.log(`Modal activado - Dimensiones forzadas (${window.innerWidth}vw x ${window.innerHeight}vh)`);
+            console.log(`Modal activado - Dimensiones forzadas (${screenWidth}px x ${screenHeight}px)`);
             
             // Forzar reflow
             void container.offsetHeight;
@@ -2431,7 +2434,7 @@
                   display: 'flex',
                   flexDirection: 'column',
                   minHeight: '0',
-                  width: '100%',
+                  width: '65%',
                   height: '100%',
                   overflow: 'hidden'
                 });
@@ -2506,14 +2509,16 @@
               const parentWidth = window.getComputedStyle(parentContainer).width;
               console.log("sale-modal-split - display:", parentDisplay, "CSS height:", parentHeight, "CSS width:", parentWidth, "box:", Math.round(parentRect.width), "x", Math.round(parentRect.height));
               
-              // Forzar dimensiones agresivamente
+              // Forzar dimensiones agresivamente con PÍXELES
               if (parentRect.width === 0 || parentRect.height === 0) {
-                console.log("⚠️ Contenedor padre tiene 0 dimensiones, forzando...");
+                console.log("⚠️ Contenedor padre tiene 0 dimensiones, forzando con píxeles...");
+                const screenWidth = window.innerWidth;
+                const screenHeight = window.innerHeight;
                 Object.assign(parentContainer.style, {
                   display: 'flex',
                   flexDirection: 'row',
-                  width: '100vw',
-                  height: '100vh',
+                  width: screenWidth + 'px',
+                  height: screenHeight + 'px',
                   position: 'fixed',
                   top: '0',
                   left: '0',
@@ -2534,11 +2539,13 @@
             // Forzar sale-scanner-inner
             const scannerInner = container.parentElement;
             if (scannerInner && scannerInner.classList.contains('sale-scanner-inner')) {
+              const scannerWidth = window.innerWidth * 0.65; // 65% para scanner
+              const scannerHeight = window.innerHeight;
               Object.assign(scannerInner.style, {
                 flex: '1',
                 display: 'flex',
-                width: '100%',
-                height: '100%',
+                width: scannerWidth + 'px',
+                height: scannerHeight + 'px',
                 minHeight: '0',
                 overflow: 'hidden',
                 background: '#000',
@@ -2561,12 +2568,12 @@
             while (attempts < 30) {
               const rect = container.getBoundingClientRect();
               
-              // En el primer intento, si sigue siendo 0x0, forzar dimensiones
+              // En el primer intento, si sigue siendo 0x0, forzar dimensiones con PÍXELES
               if (attempts === 0 && rect.height === 0 && rect.width === 0) {
-                console.log("⚠️ sale-reader tiene 0x0, forzando dimensiones...");
+                console.log("⚠️ sale-reader tiene 0x0, forzando con píxeles calculados...");
                 const scannerInner = container.parentElement;
                 if (scannerInner) {
-                  const availHeight = window.innerHeight - 100;
+                  const availHeight = window.innerHeight;
                   const availWidth = window.innerWidth * 0.65; // 65% para el scanner
                   Object.assign(container.style, {
                     width: availWidth + 'px',
@@ -2578,6 +2585,7 @@
                     height: availHeight + 'px',
                     minHeight: availHeight + 'px'
                   });
+                  console.log(`Dimensiones asignadas: ${availWidth}px x ${availHeight}px`);
                 }
               }
               
