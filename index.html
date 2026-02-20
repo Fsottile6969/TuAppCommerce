@@ -2625,11 +2625,53 @@
             const readerDiv = document.getElementById("sale-reader");
             readerDiv.innerHTML = '';
             
-            // Asegurar estilos correctos
-            readerDiv.style.width = '100%';
-            readerDiv.style.height = '100%';
-            readerDiv.style.position = 'relative';
-            readerDiv.style.overflow = 'hidden';
+            // Forzar dimensiones AGRESIVAS con !important
+            const scannerWidth = Math.min(500, window.innerWidth * 0.65);
+            const scannerHeight = Math.min(500, window.innerHeight);
+            
+            readerDiv.style.cssText = `
+              width: ${scannerWidth}px !important;
+              height: ${scannerHeight}px !important;
+              display: block !important;
+              position: relative !important;
+              overflow: hidden !important;
+              background: black !important;
+              margin: 0 !important;
+              padding: 0 !important;
+              border: none !important;
+              min-width: ${scannerWidth}px !important;
+              min-height: ${scannerHeight}px !important;
+            `.trim();
+            
+            console.log(`Contenedor sale-reader forzado: ${scannerWidth}px x ${scannerHeight}px`);
+
+            // Also force parent containers
+            const scannerSection = document.querySelector(".sale-scanner-section");
+            const scannerInner = document.querySelector(".sale-scanner-inner");
+            
+            if (scannerSection) {
+              scannerSection.style.cssText = `
+                width: ${scannerWidth}px !important;
+                height: ${scannerHeight}px !important;
+                display: block !important;
+                flex: none !important;
+                overflow: hidden !important;
+                margin: 0 !important;
+                padding: 0 !important;
+              `.trim();
+            }
+            
+            if (scannerInner) {
+              scannerInner.style.cssText = `
+                width: ${scannerWidth}px !important;
+                height: ${scannerHeight}px !important;
+                display: block !important;
+                flex: none !important;
+                overflow: hidden !important;
+                margin: 0 !important;
+                padding: 0 !important;
+              `.trim();
+            }
 
             console.log("Inicializando Html5Qrcode...");
             // Initialize Html5Qrcode
