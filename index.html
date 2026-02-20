@@ -424,7 +424,8 @@
         overflow: hidden !important;
         display: flex !important;
         flex-direction: column !important;
-        min-height: 0 !important;
+        min-height: 55vh !important;
+        height: 55vh !important;
         order: 2 !important;
       }
 
@@ -464,7 +465,8 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        min-height: 300px;
+        min-height: 500px;
+        height: 100%;
         overflow: hidden;
         background: #000;
       }
@@ -475,9 +477,11 @@
         left: 0 !important;
         width: 100% !important;
         height: 100% !important;
+        min-height: 500px !important;
         overflow: hidden !important;
         border-radius: 0 !important;
         z-index: 1 !important;
+        display: block !important;
       }
 
       #sale-reader video {
@@ -2346,37 +2350,49 @@
             }
             console.log("Container encontrado:", container);
 
+            // Verificar el contenedor padre también
+            const scannerSection = document.querySelector(".sale-scanner-section");
+            if (scannerSection) {
+              const sectionRect = scannerSection.getBoundingClientRect();
+              console.log("sale-scanner-section dimensiones:", sectionRect.width, "x", sectionRect.height);
+            }
+
             // Wait for DOM to render with proper dimensions
             let attempts = 0;
             let hasGoodDimensions = false;
-            while (attempts < 20) {
+            while (attempts < 30) {
               const rect = container.getBoundingClientRect();
-              console.log(`Intento ${attempts + 1}: dimensiones = ${rect.width}x${rect.height}`);
-              if (rect.height > 50 && rect.width > 50) {
-                console.log("✓ Container dimensions ready:", rect.width, "x", rect.height);
+              if (attempts % 5 === 0) {
+                console.log(`Intento ${attempts + 1}: sale-reader = ${Math.round(rect.width)}x${Math.round(rect.height)}`);
+              }
+              if (rect.height > 100 && rect.width > 100) {
+                console.log("✓ Container dimensions ready:", Math.round(rect.width), "x", Math.round(rect.height));
                 hasGoodDimensions = true;
                 break;
               }
-              await new Promise(resolve => setTimeout(resolve, 150));
+              await new Promise(resolve => setTimeout(resolve, 100));
               attempts++;
             }
 
             if (!hasGoodDimensions) {
               const rect = container.getBoundingClientRect();
-              console.warn("Container no alcanzó dimensiones óptimas, usando las actuales:", rect.width, "x", rect.height);
+              console.warn("Aviso: Container aún tiene dimensiones pequeñas:", Math.round(rect.width), "x", Math.round(rect.height));
             }
+
+            // Force layout recalculation
+            await new Promise(resolve => setTimeout(resolve, 200));
 
             console.log("Inicializando Html5Qrcode...");
             // Initialize Html5Qrcode
             this.scanner = new Html5Qrcode("sale-reader", {
-              verbose: true,
+              verbose: false,
               useBarCodeDetectorIfSupported: true,
             });
 
             const config = {
               fps: 15,
-              qrbox: { width: 200, height: 120 },
-              aspectRatio: 1.0,
+              qrbox: { width: 250, height: 150 },
+              aspectRatio: 1.33,
               disableFlip: false,
               formatsToSupport: [
                 Html5QrcodeSupportedFormats.EAN_13,
@@ -2389,12 +2405,12 @@
               ],
             };
 
-            console.log("Iniciando cámara...", this.currentCamera);
+            console.log("Iniciando cámara con cámara:", this.currentCamera);
             await this.scanner.start(
               { facingMode: this.currentCamera },
               config,
               (decodedText) => {
-                console.log("Código detectado:", decodedText);
+                console.log("✓ Código detectado:", decodedText);
                 this.handleSuccessfulScanInSplit(decodedText);
               },
               (errorMessage) => {
@@ -2402,14 +2418,14 @@
               },
             );
 
-            console.log("✓ Scanner started successfully in split mode");
+            console.log("✓✓ Scanner iniciado exitosamente en modo split");
             // Focus on manual input
             setTimeout(() => {
               const input = document.getElementById("saleScannerInput");
               if (input) input.focus();
             }, 100);
           } catch (err) {
-            console.error("Split scanner error completo:", err);
+            console.error("✗ Split scanner error:", err.message);
             console.error("Stack:", err.stack);
             const errorMsg = err.message || "Error desconocido";
             alert("Error al iniciar cámara: " + errorMsg);
