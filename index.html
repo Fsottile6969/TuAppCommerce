@@ -396,12 +396,14 @@
         border-radius: 0 !important;
         flex: 1 !important;
         display: flex !important;
-        flex-direction: column !important;
+        flex-direction: row !important;
         overflow: hidden !important;
         box-shadow: none !important;
         margin: 0 !important;
         padding: 0 !important;
         min-height: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
       }
 
       .sale-modal-split.active .sale-list-section {
@@ -415,6 +417,19 @@
         order: 1 !important;
       }
 
+      /* Base styles for scanner section */
+      .sale-scanner-section {
+        flex: 1;
+        background: black;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+      }
+
       .sale-modal-split.active .sale-scanner-section {
         flex: 1 !important;
         background: #000 !important;
@@ -424,6 +439,19 @@
         flex-direction: column !important;
         min-height: auto !important;
         order: 2 !important;
+        width: 100% !important;
+        height: 100% !important;
+      }
+      
+      /* Base styles for list section */
+      .sale-list-section {
+        flex: 0 0 35%;
+        display: flex;
+        flex-direction: column;
+        background: white;
+        overflow: hidden;
+        width: 100%;
+        min-height: 0;
       }
 
       .sale-modal-header-split {
@@ -2349,10 +2377,25 @@
             container.style.cssText = '';
             container.classList.add("active");
             
-            console.log(`Modal activado`);
+            // Forzar dimensiones inmediatamente
+            container.style.display = 'flex';
+            container.style.flexDirection = 'column';
+            container.style.width = '100%';
+            container.style.height = '100%';
+            container.style.position = 'fixed';
+            container.style.inset = '0';
+            container.style.zIndex = '2000';
+            container.style.backgroundColor = 'white';
+            container.style.padding = '0';
+            container.style.margin = '0';
+            
+            console.log(`Modal activado - Dimensiones forzadas`);
             
             // Actualizar UI primero
             this.updateSplitCartUI();
+            
+            // Forzar reflow
+            void container.offsetHeight;
             
             // IMPORTANTE: Esperar a que el navegador renderice
             setTimeout(() => {
