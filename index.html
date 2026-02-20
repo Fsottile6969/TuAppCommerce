@@ -380,8 +380,6 @@
         left: 0 !important;
         right: 0 !important;
         bottom: 0 !important;
-        width: 100vw !important;
-        height: 100vh !important;
         background: white !important;
         z-index: 2000 !important;
         display: none !important;
@@ -392,15 +390,12 @@
       .sale-modal-split.active {
         display: flex !important;
         flex-direction: column !important;
-        width: 100vw !important;
-        height: 100vh !important;
       }
 
       .sale-modal-split.active .modal-content {
         background: white !important;
         border-radius: 0 !important;
         flex: 1 !important;
-        width: 100vw !important;
         display: flex !important;
         flex-direction: column !important;
         overflow: hidden !important;
@@ -2314,20 +2309,7 @@
             container.style.cssText = '';
             container.classList.add("active");
             
-            // Establecer dimensiones EXPLÍCITAS basadas en el viewport
-            const w = window.innerWidth;
-            const h = window.innerHeight;
-            
-            container.style.position = 'fixed';
-            container.style.top = '0px';
-            container.style.left = '0px';
-            container.style.width = w + 'px';
-            container.style.height = h + 'px';
-            container.style.zIndex = '2000';
-            container.style.display = 'flex';
-            container.style.flexDirection = 'column';
-            
-            console.log(`Dimensiones establecidas: ${w}x${h}`);
+            console.log(`Modal activado`);
             
             // Actualizar UI primero
             this.updateSplitCartUI();
