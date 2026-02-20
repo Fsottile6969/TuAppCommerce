@@ -2372,111 +2372,157 @@
           }
           
           this.currentCart = [];
-          const container = document.getElementById("saleSplitContainer");
           
-          if (container) {
-            console.log("Container encontrado, agregando clase active");
-            // Limpiar estilos previos
-            container.style.cssText = '';
-            container.classList.add("active");
-            
-            // Forzar dimensiones usando cssText con !important
-            const screenWidth = window.innerWidth;
-            const screenHeight = window.innerHeight;
-            
-            container.style.cssText = `
-              display: flex !important;
-              flex-direction: column !important;
-              width: 100vw !important;
-              height: 100vh !important;
-              position: fixed !important;
-              top: 0 !important;
-              left: 0 !important;
-              z-index: 2000 !important;
-              background-color: white !important;
-              padding: 0 !important;
-              margin: 0 !important;
-              border: none !important;
-              overflow: hidden !important;
-              visibility: visible !important;
-              pointer-events: auto !important;
-            `.trim();
-            
-            console.log(`Modal activado - Dimensiones forzadas (${screenWidth}px x ${screenHeight}px)`);
-            
-            // Forzar reflow agresivo
-            void container.offsetHeight;
-            void container.offsetWidth;
-            
-            // Forzar recalculación con toggle
-            container.style.display = 'none';
-            void container.offsetHeight;
-            container.style.display = 'flex';
-            void container.offsetHeight;
-            
-            // Actualizar UI primero
-            this.updateSplitCartUI();
-            
-            // IMPORTANTE: Esperar a que el navegador renderice
-            setTimeout(() => {
-              console.log("Iniciando scanner después de 500ms...");
-              
-              // Forzar también el modal-content
-              const modalContent = container.querySelector('.modal-content');
-              if (modalContent) {
-                modalContent.style.cssText = `
-                  background: white !important;
-                  border-radius: 0 !important;
-                  flex: 1 !important;
-                  display: flex !important;
-                  flex-direction: row !important;
-                  overflow: hidden !important;
-                  box-shadow: none !important;
-                  margin: 0 !important;
-                  padding: 0 !important;
-                  min-height: 0 !important;
-                  width: 100% !important;
-                  height: 100% !important;
-                `.trim();
-              }
-              
-              // Forzar sale-scanner-section
-              let scannerSection = container.querySelector('.sale-scanner-section');
-              if (scannerSection) {
-                scannerSection.style.cssText = `
-                  flex: 1 !important;
-                  display: flex !important;
-                  flex-direction: column !important;
-                  min-height: 0 !important;
-                  width: 65% !important;
-                  height: 100% !important;
-                  overflow: hidden !important;
-                  background: black !important;
-                  position: relative !important;
-                `.trim();
-              }
-              
-              // Forzar sale-list-section
-              const listSection = container.querySelector('.sale-list-section');
-              if (listSection) {
-                listSection.style.cssText = `
-                  flex: 0 0 35% !important;
-                  display: flex !important;
-                  flex-direction: column !important;
-                  min-height: 0 !important;
-                  width: 35% !important;
-                  height: 100% !important;
-                  overflow: hidden !important;
-                  background: white !important;
-                `.trim();
-              }
-              
-              this.startSaleScannerSplit();
-            }, 500);
-            
-          } else {
-            console.error("Container NO encontrado!");
+          // Crear modal completamente nuevo en JavaScript
+          let splitContainer = document.getElementById("saleSplitContainerDynamic");
+          if (splitContainer) {
+            splitContainer.remove();
           }
+          
+          splitContainer = document.createElement("div");
+          splitContainer.id = "saleSplitContainerDynamic";
+          splitContainer.style.cssText = `
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 2000 !important;
+            display: flex !important;
+            flex-direction: row !important;
+            background: white !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            overflow: hidden !important;
+          `.trim();
+          
+          // Scanner section (65%)
+          const scannerSection = document.createElement("div");
+          scannerSection.style.cssText = `
+            flex: 0 0 65% !important;
+            display: flex !important;
+            flex-direction: column !important;
+            background: black !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            overflow: hidden !important;
+          `.trim();
+          
+          // Scanner inner
+          const scannerInner = document.createElement("div");
+          scannerInner.className = "sale-scanner-inner";
+          scannerInner.style.cssText = `
+            flex: 1 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background: black !important;
+            overflow: hidden !important;
+          `.trim();
+          
+          // Reader div
+          const readerDiv = document.createElement("div");
+          readerDiv.id = "sale-reader";
+          readerDiv.style.cssText = `
+            width: 100% !important;
+            height: 100% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background: black !important;
+          `.trim();
+          
+          scannerInner.appendChild(readerDiv);
+          scannerSection.appendChild(scannerInner);
+          
+          // List section (35%)
+          const listSection = document.createElement("div");
+          listSection.className = "sale-list-section";
+          listSection.style.cssText = `
+            flex: 0 0 35% !important;
+            display: flex !important;
+            flex-direction: column !important;
+            background: white !important;
+            border-left: 2px solid #e5e7eb !important;
+            overflow: hidden !important;
+            padding: 0 !important;
+            margin: 0 !important;
+          `.trim();
+          
+          // Add content to list section
+          const header = document.createElement("div");
+          header.style.cssText = `
+            padding: 15px !important;
+            background: #f9fafb !important;
+            border-bottom: 2px solid #e5e7eb !important;
+          `.trim();
+          header.innerHTML = `
+            <h3 style="margin: 0; font-weight: bold;">Carrito de Venta</h3>
+            <p style="margin: 5px 0 0 0; color: #666; font-size: 12px;">Productos escaneados</p>
+          `;
+          listSection.appendChild(header);
+          
+          // Cart items container
+          const cartContainer = document.createElement("div");
+          cartContainer.id = "saleSplitCartItems";
+          cartContainer.style.cssText = `
+            flex: 1 !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+          `.trim();
+          listSection.appendChild(cartContainer);
+          
+          // Cart footer with buttons
+          const footer = document.createElement("div");
+          footer.style.cssText = `
+            padding: 10px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 8px !important;
+            background: #f9fafb !important;
+            border-top: 2px solid #e5e7eb !important;
+          `.trim();
+          
+          const totalDiv = document.createElement("div");
+          totalDiv.id = "saleSplitTotal";
+          totalDiv.style.cssText = `
+            font-size: 18px !important;
+            font-weight: bold !important;
+            text-align: right !important;
+            padding: 10px 0 !important;
+          `.trim();
+          totalDiv.textContent = "Total: RD$ 0.00";
+          footer.appendChild(totalDiv);
+          
+          const closeBtn = document.createElement("button");
+          closeBtn.style.cssText = `
+            width: 100% !important;
+            padding: 10px !important;
+            background: #ef4444 !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 6px !important;
+            cursor: pointer !important;
+            font-weight: bold !important;
+          `.trim();
+          closeBtn.textContent = "✕ Cerrar Venta";
+          closeBtn.onclick = () => this.closeSplitSale();
+          footer.appendChild(closeBtn);
+          
+          listSection.appendChild(footer);
+          
+          // Assemble modal
+          splitContainer.appendChild(scannerSection);
+          splitContainer.appendChild(listSection);
+          document.body.appendChild(splitContainer);
+          
+          console.log("✓ Modal dinámico creado y agregado al body");
+          
+          // Iniciar scanner
+          setTimeout(() => {
+            console.log("Iniciando scanner después de 500ms...");
+            this.startSaleScannerSplit();
+          }, 500);
         },
 
         closeSplitSale() {
@@ -2488,11 +2534,10 @@
           } catch (e) {
             console.error("Error stopping split scanner:", e);
           }
-          const container = document.getElementById("saleSplitContainer");
-          if (container) {
-            container.classList.remove("active");
-            // Clear inline styles when closing
-            container.style.cssText = '';
+          // Eliminar contenedor dinámico
+          const dynamicContainer = document.getElementById("saleSplitContainerDynamic");
+          if (dynamicContainer) {
+            dynamicContainer.remove();
           }
           this.currentCart = [];
         },
@@ -2517,38 +2562,13 @@
               this.scanner = null;
             }
 
-            // Verificar que el contenedor PADRE sea visible
-            const parentContainer = document.getElementById("saleSplitContainer");
-            if (parentContainer) {
-              const parentRect = parentContainer.getBoundingClientRect();
-              const parentDisplay = window.getComputedStyle(parentContainer).display;
-              const parentHeight = window.getComputedStyle(parentContainer).height;
-              const parentWidth = window.getComputedStyle(parentContainer).width;
-              console.log("sale-modal-split - display:", parentDisplay, "CSS height:", parentHeight, "CSS width:", parentWidth, "box:", Math.round(parentRect.width), "x", Math.round(parentRect.height));
-              
-              // Forzar dimensiones agresivamente con PÍXELES
-              if (parentRect.width === 0 || parentRect.height === 0) {
-                console.log("⚠️ Contenedor padre tiene 0 dimensiones, forzando con píxeles...");
-                const screenWidth = window.innerWidth;
-                const screenHeight = window.innerHeight;
-                parentContainer.style.cssText = `
-                  display: flex !important;
-                  flex-direction: column !important;
-                  width: 100vw !important;
-                  height: 100vh !important;
-                  position: fixed !important;
-                  top: 0 !important;
-                  left: 0 !important;
-                  z-index: 2000 !important;
-                  background: white !important;
-                  overflow: hidden !important;
-                  visibility: visible !important;
-                  pointer-events: auto !important;
-                `.trim();
-                console.log("✓ Estilos forzados al contenedor padre");
-                void parentContainer.offsetHeight; // reflow
-              }
+            // Usar el contenedor dinámico creado en openSaleModal()
+            const parentContainer = document.getElementById("saleSplitContainerDynamic");
+            if (!parentContainer) {
+              throw new Error("Modal dinámico no encontrado. Asegúrate de llamar openSaleModal() primero.");
             }
+            
+            console.log("✓ Modal dinámico encontrado");
 
             // Ensure the container exists and is visible
             const container = document.getElementById("sale-reader");
@@ -2556,150 +2576,11 @@
               throw new Error("Scanner container 'sale-reader' not found");
             }
             console.log("sale-reader encontrado");
+
+            // Limpiar contenedor
+            container.innerHTML = '';
             
-            // Forzar sale-scanner-inner
-            let scannerInner = container.parentElement;
-            if (scannerInner && scannerInner.classList.contains('sale-scanner-inner')) {
-              const scannerWidth = window.innerWidth * 0.65; // 65% para scanner
-              const scannerHeight = window.innerHeight;
-              scannerInner.style.cssText = `
-                flex: 1 !important;
-                display: flex !important;
-                width: ${scannerWidth}px !important;
-                height: ${scannerHeight}px !important;
-                min-height: 0 !important;
-                overflow: hidden !important;
-                background: black !important;
-                position: relative !important;
-              `.trim();
-            }
-            // Verificar el contenedor padre también
-            let scannerSection = document.querySelector(".sale-scanner-section");
-            if (scannerSection) {
-              const sectionRect = scannerSection.getBoundingClientRect();
-              const sectionDisplay = window.getComputedStyle(scannerSection).display;
-              const sectionHeight = window.getComputedStyle(scannerSection).height;
-              console.log("sale-scanner-section - display:", sectionDisplay, "CSS height:", sectionHeight, "box:", Math.round(sectionRect.width), "x", Math.round(sectionRect.height));
-            }
-
-            // Wait for DOM to render with proper dimensions
-            let attempts = 0;
-            let hasGoodDimensions = false;
-            while (attempts < 30) {
-              const rect = container.getBoundingClientRect();
-              
-            // En el primer intento, si sigue siendo 0x0, forzar dimensiones con PÍXELES
-              if (attempts === 0 && rect.height === 0 && rect.width === 0) {
-                console.log("⚠️ sale-reader tiene 0x0, forzando con píxeles calculados...");
-                if (scannerInner) {
-                  const availHeight = window.innerHeight;
-                  const availWidth = window.innerWidth * 0.65; // 65% para el scanner
-                  container.style.cssText = `
-                    width: ${availWidth}px !important;
-                    height: ${availHeight}px !important;
-                    min-height: ${availHeight}px !important;
-                    display: block !important;
-                    position: relative !important;
-                    overflow: hidden !important;
-                    background: black !important;
-                  `.trim();
-                  scannerInner.style.cssText = `
-                    width: ${availWidth}px !important;
-                    height: ${availHeight}px !important;
-                    min-height: ${availHeight}px !important;
-                    display: flex !important;
-                    overflow: hidden !important;
-                  `.trim();
-                  console.log(`Dimensiones asignadas: ${availWidth}px x ${availHeight}px`);
-                }
-              }
-              
-              if (attempts % 5 === 0) {
-                const display = window.getComputedStyle(container).display;
-                console.log(`Intento ${attempts + 1}: sale-reader display=${display}, box-dimensiones=${Math.round(rect.width)}x${Math.round(rect.height)}`);
-              }
-              if (rect.height > 100 && rect.width > 100) {
-                console.log("✓ sale-reader tiene buenas dimensiones:", Math.round(rect.width), "x", Math.round(rect.height));
-                hasGoodDimensions = true;
-                break;
-              }
-              await new Promise(resolve => setTimeout(resolve, 100));
-              attempts++;
-            }
-
-            const finalRect = container.getBoundingClientRect();
-            console.log("Dimensiones FINALES de sale-reader:", Math.round(finalRect.width), "x", Math.round(finalRect.height));
-
-            if (finalRect.width === 0 || finalRect.height === 0) {
-              console.warn("⚠️ CRÍTICO: El contenedor sigue teniendo 0 dimensiones");
-              console.log("Intentando establecer altura manualmente...");
-              if (scannerInner) {
-                const parentHeight = window.innerHeight * 0.55;
-                scannerInner.style.cssText += `
-                  height: ${parentHeight}px !important;
-                `.trim();
-                container.style.cssText += `
-                  height: ${parentHeight}px !important;
-                `.trim();
-                console.log("Height forzado a:", parentHeight);
-              }
-            }
-
-            // Force layout recalculation
-            await new Promise(resolve => setTimeout(resolve, 200));
-
-            // Limpiar completamente el contenedor antes de inicializar
-            console.log("Limpiando contenedor sale-reader...");
-            const readerDiv = document.getElementById("sale-reader");
-            readerDiv.innerHTML = '';
-            
-            // Forzar dimensiones AGRESIVAS con !important
-            const scannerWidth = Math.min(500, window.innerWidth * 0.65);
-            const scannerHeight = Math.min(500, window.innerHeight);
-            
-            readerDiv.style.cssText = `
-              width: ${scannerWidth}px !important;
-              height: ${scannerHeight}px !important;
-              display: block !important;
-              position: relative !important;
-              overflow: hidden !important;
-              background: black !important;
-              margin: 0 !important;
-              padding: 0 !important;
-              border: none !important;
-              min-width: ${scannerWidth}px !important;
-              min-height: ${scannerHeight}px !important;
-            `.trim();
-            
-            console.log(`Contenedor sale-reader forzado: ${scannerWidth}px x ${scannerHeight}px`);
-
-            // Also force parent containers
-            scannerInner = document.querySelector(".sale-scanner-inner");
-            
-            if (scannerSection) {
-              scannerSection.style.cssText = `
-                width: ${scannerWidth}px !important;
-                height: ${scannerHeight}px !important;
-                display: block !important;
-                flex: none !important;
-                overflow: hidden !important;
-                margin: 0 !important;
-                padding: 0 !important;
-              `.trim();
-            }
-            
-            if (scannerInner) {
-              scannerInner.style.cssText = `
-                width: ${scannerWidth}px !important;
-                height: ${scannerHeight}px !important;
-                display: block !important;
-                flex: none !important;
-                overflow: hidden !important;
-                margin: 0 !important;
-                padding: 0 !important;
-              `.trim();
-            }
-
+            // El contenedor ya tiene el tamaño correcto desde openSaleModal()
             console.log("Inicializando Html5Qrcode...");
             // Initialize Html5Qrcode
             this.scanner = new Html5Qrcode("sale-reader", {
