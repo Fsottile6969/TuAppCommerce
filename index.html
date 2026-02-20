@@ -2377,29 +2377,80 @@
             container.style.cssText = '';
             container.classList.add("active");
             
-            // Forzar dimensiones inmediatamente
-            container.style.display = 'flex';
-            container.style.flexDirection = 'column';
-            container.style.width = '100%';
-            container.style.height = '100%';
-            container.style.position = 'fixed';
-            container.style.inset = '0';
-            container.style.zIndex = '2000';
-            container.style.backgroundColor = 'white';
-            container.style.padding = '0';
-            container.style.margin = '0';
+            // Forzar dimensiones de forma más agresiva
+            const styles = {
+              display: 'flex',
+              flexDirection: 'row',
+              width: '100vw',
+              height: '100vh',
+              position: 'fixed',
+              top: '0',
+              left: '0',
+              right: '0',
+              bottom: '0',
+              zIndex: '2000',
+              backgroundColor: 'white',
+              padding: '0',
+              margin: '0',
+              border: 'none',
+              overflow: 'hidden'
+            };
             
-            console.log(`Modal activado - Dimensiones forzadas`);
+            Object.assign(container.style, styles);
             
-            // Actualizar UI primero
-            this.updateSplitCartUI();
+            console.log(`Modal activado - Dimensiones forzadas (${window.innerWidth}vw x ${window.innerHeight}vh)`);
             
             // Forzar reflow
             void container.offsetHeight;
             
+            // Actualizar UI primero
+            this.updateSplitCartUI();
+            
             // IMPORTANTE: Esperar a que el navegador renderice
             setTimeout(() => {
               console.log("Iniciando scanner después de 500ms...");
+              
+              // Forzar también el modal-content
+              const modalContent = container.querySelector('.modal-content');
+              if (modalContent) {
+                Object.assign(modalContent.style, {
+                  flex: '1',
+                  display: 'flex',
+                  flexDirection: 'row',
+                  overflow: 'hidden',
+                  width: '100%',
+                  height: '100%'
+                });
+              }
+              
+              // Forzar sale-scanner-section
+              const scannerSection = container.querySelector('.sale-scanner-section');
+              if (scannerSection) {
+                Object.assign(scannerSection.style, {
+                  flex: '1',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  minHeight: '0',
+                  width: '100%',
+                  height: '100%',
+                  overflow: 'hidden'
+                });
+              }
+              
+              // Forzar sale-list-section
+              const listSection = container.querySelector('.sale-list-section');
+              if (listSection) {
+                Object.assign(listSection.style, {
+                  flex: '0 0 35%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  minHeight: '0',
+                  width: '35%',
+                  height: '100%',
+                  overflow: 'hidden'
+                });
+              }
+              
               this.startSaleScannerSplit();
             }, 500);
             
@@ -2454,6 +2505,23 @@
               const parentHeight = window.getComputedStyle(parentContainer).height;
               const parentWidth = window.getComputedStyle(parentContainer).width;
               console.log("sale-modal-split - display:", parentDisplay, "CSS height:", parentHeight, "CSS width:", parentWidth, "box:", Math.round(parentRect.width), "x", Math.round(parentRect.height));
+              
+              // Forzar dimensiones agresivamente
+              if (parentRect.width === 0 || parentRect.height === 0) {
+                console.log("⚠️ Contenedor padre tiene 0 dimensiones, forzando...");
+                Object.assign(parentContainer.style, {
+                  display: 'flex',
+                  flexDirection: 'row',
+                  width: '100vw',
+                  height: '100vh',
+                  position: 'fixed',
+                  top: '0',
+                  left: '0',
+                  zIndex: '2000',
+                  overflow: 'hidden'
+                });
+                void parentContainer.offsetHeight; // reflow
+              }
             }
 
             // Ensure the container exists and is visible
@@ -2462,6 +2530,21 @@
               throw new Error("Scanner container 'sale-reader' not found");
             }
             console.log("sale-reader encontrado");
+            
+            // Forzar sale-scanner-inner
+            const scannerInner = container.parentElement;
+            if (scannerInner && scannerInner.classList.contains('sale-scanner-inner')) {
+              Object.assign(scannerInner.style, {
+                flex: '1',
+                display: 'flex',
+                width: '100%',
+                height: '100%',
+                minHeight: '0',
+                overflow: 'hidden',
+                background: '#000',
+                position: 'relative'
+              });
+            }
 
             // Verificar el contenedor padre también
             const scannerSection = document.querySelector(".sale-scanner-section");
@@ -2477,6 +2560,27 @@
             let hasGoodDimensions = false;
             while (attempts < 30) {
               const rect = container.getBoundingClientRect();
+              
+              // En el primer intento, si sigue siendo 0x0, forzar dimensiones
+              if (attempts === 0 && rect.height === 0 && rect.width === 0) {
+                console.log("⚠️ sale-reader tiene 0x0, forzando dimensiones...");
+                const scannerInner = container.parentElement;
+                if (scannerInner) {
+                  const availHeight = window.innerHeight - 100;
+                  const availWidth = window.innerWidth * 0.65; // 65% para el scanner
+                  Object.assign(container.style, {
+                    width: availWidth + 'px',
+                    height: availHeight + 'px',
+                    minHeight: availHeight + 'px'
+                  });
+                  Object.assign(scannerInner.style, {
+                    width: availWidth + 'px',
+                    height: availHeight + 'px',
+                    minHeight: availHeight + 'px'
+                  });
+                }
+              }
+              
               if (attempts % 5 === 0) {
                 const display = window.getComputedStyle(container).display;
                 console.log(`Intento ${attempts + 1}: sale-reader display=${display}, box-dimensiones=${Math.round(rect.width)}x${Math.round(rect.height)}`);
