@@ -2319,25 +2319,25 @@
             container.style.cssText = '';
             container.classList.add("active");
             
-            // Forzar dimensiones explícitamente
+            // Establecer dimensiones EXPLÍCITAS basadas en el viewport
+            const w = window.innerWidth;
+            const h = window.innerHeight;
+            
+            container.style.position = 'fixed';
+            container.style.top = '0px';
+            container.style.left = '0px';
+            container.style.width = w + 'px';
+            container.style.height = h + 'px';
+            container.style.zIndex = '2000';
             container.style.display = 'flex';
             container.style.flexDirection = 'column';
-            container.style.position = 'fixed';
-            container.style.top = '0';
-            container.style.left = '0';
-            container.style.right = '0';
-            container.style.bottom = '0';
-            container.style.width = '100vw';
-            container.style.height = '100vh';
-            container.style.zIndex = '2000';
             
-            console.log("Estilos inline establecidos, esperando render...");
+            console.log(`Dimensiones establecidas: ${w}x${h}`);
             
             // Actualizar UI primero
             this.updateSplitCartUI();
             
-            // IMPORTANTE: Esperar MUCHO más tiempo antes de inicializar el scanner
-            // para que el navegador tenga tiempo de renderizar con las nuevas dimensiones
+            // IMPORTANTE: Esperar a que el navegador renderice
             setTimeout(() => {
               console.log("Iniciando scanner después de 500ms...");
               this.startSaleScannerSplit();
@@ -2368,6 +2368,7 @@
 
         async startSaleScannerSplit() {
           console.log("=== startSaleScannerSplit() iniciando ===");
+          console.log("Viewport:", window.innerWidth, "x", window.innerHeight);
           try {
             // Stop existing scanner if any
             if (this.scanner) {
@@ -2384,7 +2385,9 @@
             if (parentContainer) {
               const parentRect = parentContainer.getBoundingClientRect();
               const parentDisplay = window.getComputedStyle(parentContainer).display;
-              console.log("sale-modal-split display:", parentDisplay, "dimensiones:", Math.round(parentRect.width), "x", Math.round(parentRect.height));
+              const parentHeight = window.getComputedStyle(parentContainer).height;
+              const parentWidth = window.getComputedStyle(parentContainer).width;
+              console.log("sale-modal-split - display:", parentDisplay, "CSS height:", parentHeight, "CSS width:", parentWidth, "box:", Math.round(parentRect.width), "x", Math.round(parentRect.height));
             }
 
             // Ensure the container exists and is visible
@@ -2399,7 +2402,8 @@
             if (scannerSection) {
               const sectionRect = scannerSection.getBoundingClientRect();
               const sectionDisplay = window.getComputedStyle(scannerSection).display;
-              console.log("sale-scanner-section display:", sectionDisplay, "dimensiones:", Math.round(sectionRect.width), "x", Math.round(sectionRect.height));
+              const sectionHeight = window.getComputedStyle(scannerSection).height;
+              console.log("sale-scanner-section - display:", sectionDisplay, "CSS height:", sectionHeight, "box:", Math.round(sectionRect.width), "x", Math.round(sectionRect.height));
             }
 
             // Wait for DOM to render with proper dimensions
@@ -2409,7 +2413,7 @@
               const rect = container.getBoundingClientRect();
               if (attempts % 5 === 0) {
                 const display = window.getComputedStyle(container).display;
-                console.log(`Intento ${attempts + 1}: sale-reader display=${display}, dimensiones=${Math.round(rect.width)}x${Math.round(rect.height)}`);
+                console.log(`Intento ${attempts + 1}: sale-reader display=${display}, box-dimensiones=${Math.round(rect.width)}x${Math.round(rect.height)}`);
               }
               if (rect.height > 100 && rect.width > 100) {
                 console.log("✓ sale-reader tiene buenas dimensiones:", Math.round(rect.width), "x", Math.round(rect.height));
@@ -2422,6 +2426,18 @@
 
             const finalRect = container.getBoundingClientRect();
             console.log("Dimensiones FINALES de sale-reader:", Math.round(finalRect.width), "x", Math.round(finalRect.height));
+
+            if (finalRect.width === 0 || finalRect.height === 0) {
+              console.warn("⚠️ CRÍTICO: El contenedor sigue teniendo 0 dimensiones");
+              console.log("Intentando establecer altura manualmente...");
+              const scannerInner = container.parentElement;
+              if (scannerInner) {
+                const parentHeight = window.innerHeight * 0.55;
+                scannerInner.style.height = parentHeight + 'px';
+                container.style.height = parentHeight + 'px';
+                console.log("Height forzado a:", parentHeight);
+              }
+            }
 
             // Force layout recalculation
             await new Promise(resolve => setTimeout(resolve, 200));
