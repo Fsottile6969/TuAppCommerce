@@ -2284,6 +2284,13 @@
         // Sales
         openSaleModal() {
           console.log("=== openSaleModal() iniciando ===");
+          
+          // Asegurar que el modal simple se cierre
+          const simpleModal = document.getElementById("saleModal");
+          if (simpleModal) {
+            simpleModal.classList.remove("active");
+          }
+          
           this.currentCart = [];
           const container = document.getElementById("saleSplitContainer");
           
@@ -2293,7 +2300,7 @@
             container.classList.add("active");
             console.log("Clase 'active' agregada");
           } else {
-            console.error("Container no encontrado!");
+            console.error("Container NO encontrado! No existe #saleSplitContainer");
           }
           
           this.updateSplitCartUI();
