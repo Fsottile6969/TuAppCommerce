@@ -1857,7 +1857,15 @@
         async startScanner() {
           try {
             if (this.scanner) {
-              await this.scanner.stop().catch(() => {});
+              try {
+                await this.scanner.stop();
+                await new Promise(resolve => setTimeout(resolve, 500));
+              } catch (e) {
+                console.warn("Error stopping scanner:", e);
+                this.scanner = null;
+                await new Promise(resolve => setTimeout(resolve, 500));
+              }
+              this.scanner = null;
             }
 
             this.scanner = new Html5Qrcode("reader", {
@@ -1893,7 +1901,8 @@
             );
           } catch (err) {
             console.error("Scanner error:", err);
-            this.showError("Error al iniciar cámara: " + err.message);
+            const errorMsg = (typeof err === 'string' ? err : (err?.message || JSON.stringify(err) || "Error desconocido"));
+            this.showError("Error al iniciar cámara: " + errorMsg);
             // Show manual entry as fallback
             document.getElementById("manualBarcode").focus();
           }
@@ -2027,7 +2036,7 @@
         async closeScanner() {
           try {
             if (this.scanner) {
-              await this.scanner.stop();
+              await this.scanner.stop().catch(() => {});
               this.scanner = null;
             }
           } catch (e) {
@@ -2346,14 +2355,20 @@
           console.log("=== startSaleScannerSplit() iniciando ===");
           console.log("Viewport:", window.innerWidth, "x", window.innerHeight);
           try {
-            // Stop existing scanner if any
+            // Stop existing scanner if any - with retries
             if (this.scanner) {
               try {
                 console.log("Deteniendo scanner anterior...");
                 await this.scanner.stop();
+                // Give it time to fully cleanup
+                await new Promise(resolve => setTimeout(resolve, 500));
               } catch (e) {
                 console.warn("Error stopping previous scanner:", e);
+                // Still try to null it out
+                this.scanner = null;
+                await new Promise(resolve => setTimeout(resolve, 500));
               }
+              this.scanner = null;
             }
 
             // Verificar que el contenedor PADRE sea visible
@@ -2461,8 +2476,8 @@
               if (input) input.focus();
             }, 100);
           } catch (err) {
-            console.error("✗ Error al iniciar scanner:", err.message);
-            const errorMsg = err.message || "Error desconocido";
+            console.error("✗ Error al iniciar scanner:", err);
+            const errorMsg = (typeof err === 'string' ? err : (err?.message || JSON.stringify(err) || "Error desconocido"));
             alert("Error al iniciar cámara: " + errorMsg);
             // Still allow manual entry
             setTimeout(() => {
