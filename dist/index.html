@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#0f0f1a" />
+  <meta name="description" content="App de gestión de comercio con inventario, ventas y reportes diarios" />
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+  <title>ComercioApp</title>
+  <script type="module" crossorigin src="/assets/index-9pp9LT_H.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-DRJcxyWD.css">
+</head>
+
+<body>
+  <!-- App Shell -->
+  <div id="app">
+    <!-- Header -->
+    <header id="app-header">
+      <div class="header-inner">
+        <span class="header-logo">🛒</span>
+        <h1 class="header-title" id="page-title">Stock</h1>
+        <button class="header-action" id="header-action-btn" style="display:none">
+          <span id="header-action-icon">+</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content">
+      <!-- Stock Section -->
+      <section id="section-stock" class="section active">
+        <div class="search-bar">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="stock-search" placeholder="Buscar producto..." autocomplete="off" />
+        </div>
+        <div id="stock-list" class="product-grid"></div>
+        <div id="stock-empty" class="empty-state" style="display:none">
+          <div class="empty-icon">📦</div>
+          <p>No hay productos aún</p>
+          <p class="empty-sub">Pulsá + para agregar el primero</p>
+        </div>
+      </section>
+
+      <!-- Ventas Section -->
+      <section id="section-ventas" class="section">
+        <div class="ventas-scanner-area">
+          <button class="scan-btn pulse" id="scan-venta-btn">
+            <span class="scan-icon">📷</span>
+            <span>Escanear Producto</span>
+          </button>
+        </div>
+        <div id="cart-items" class="cart-list"></div>
+        <div id="cart-empty" class="empty-state">
+          <div class="empty-icon">🛒</div>
+          <p>Carrito vacío</p>
+          <p class="empty-sub">Escaneá un producto para comenzar</p>
+        </div>
+        <div id="cart-footer" class="cart-footer" style="display:none">
+          <div class="cart-total-row">
+            <span>Total</span>
+            <span id="cart-total" class="cart-total-amount">$0.00</span>
+          </div>
+          <div class="cart-actions">
+            <button class="btn btn-ghost" id="clear-cart-btn">Limpiar</button>
+            <button class="btn btn-primary" id="confirm-sale-btn">Confirmar Venta</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Reportes Section -->
+      <section id="section-reportes" class="section">
+        <div class="report-header">
+          <input type="date" id="report-date" class="date-picker" />
+          <button class="btn btn-outline" id="refresh-report-btn">Ver Reporte</button>
+        </div>
+        <div id="report-content">
+          <div id="report-empty" class="empty-state">
+            <div class="empty-icon">📊</div>
+            <p>Sin ventas para esta fecha</p>
+            <p class="empty-sub">Seleccioná una fecha con ventas</p>
+          </div>
+          <div id="report-data" style="display:none">
+            <div class="report-summary-cards">
+              <div class="summary-card">
+                <span class="summary-label">Total Vendido</span>
+                <span class="summary-value accent" id="report-total">$0</span>
+              </div>
+              <div class="summary-card">
+                <span class="summary-label">Transacciones</span>
+                <span class="summary-value" id="report-count">0</span>
+              </div>
+              <div class="summary-card">
+                <span class="summary-label">Unidades</span>
+                <span class="summary-value" id="report-units">0</span>
+              </div>
+            </div>
+            <h3 class="section-subtitle">📋 Detalle por Producto</h3>
+            <div id="report-products-list" class="report-table"></div>
+            <h3 class="section-subtitle">🔁 Productos a Reponer</h3>
+            <div id="report-restock-list" class="restock-list"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav id="bottom-nav">
+      <button class="nav-btn active" data-section="stock" id="nav-stock">
+        <span class="nav-icon">📦</span>
+        <span class="nav-label">Stock</span>
+      </button>
+      <button class="nav-btn" data-section="ventas" id="nav-ventas">
+        <span class="nav-icon">🛒</span>
+        <span class="nav-label">Ventas</span>
+      </button>
+      <button class="nav-btn" data-section="reportes" id="nav-reportes">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Reportes</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- ======= MODALS ======= -->
+
+  <!-- Add/Edit Product Modal -->
+  <div id="modal-product" class="modal-overlay" style="display:none">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <h2 id="modal-product-title">Nuevo Producto</h2>
+        <button class="modal-close" id="close-product-modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <!-- Scanner preview for adding -->
+        <div class="form-group" id="scanner-group">
+          <label>Código de Barras</label>
+          <div class="barcode-field">
+            <input type="text" id="product-barcode" placeholder="Escaneá o escribí el código" />
+            <button class="icon-btn" id="scan-product-btn" title="Escanear">📷</button>
+          </div>
+        </div>
+        <!-- Photo -->
+        <div class="form-group">
+          <label>Foto del Producto <span class="optional">(opcional)</span></label>
+          <div class="photo-upload" id="photo-upload-area">
+            <img id="product-photo-preview" class="photo-preview" style="display:none" alt="preview" />
+            <div id="photo-placeholder" class="photo-placeholder">
+              <span>📷</span>
+              <span>Subir foto</span>
+            </div>
+            <input type="file" id="product-photo-input" accept="image/*" capture="environment" style="display:none" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="product-name">Nombre del Producto *</label>
+          <input type="text" id="product-name" placeholder="Ej: Coca Cola 500ml" required />
+        </div>
+        <div class="form-group">
+          <label for="product-price">Precio *</label>
+          <div class="input-prefix">
+            <span>$</span>
+            <input type="number" id="product-price" placeholder="0.00" min="0" step="0.01" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="product-quantity">Cantidad en Stock *</label>
+          <input type="number" id="product-quantity" placeholder="0" min="0" step="1" required />
+        </div>
+        <input type="hidden" id="product-edit-id" />
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="cancel-product-btn">Cancelar</button>
+        <button class="btn btn-primary" id="save-product-btn">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scanner Modal -->
+  <div id="modal-scanner" class="modal-overlay scanner-modal" style="display:none">
+    <div class="scanner-container">
+      <div class="scanner-header">
+        <span>Apuntá al código de barras</span>
+        <button class="modal-close white" id="close-scanner-modal">✕</button>
+      </div>
+      <div id="qr-reader"></div>
+      <div class="scanner-frame">
+        <div class="scanner-line"></div>
+      </div>
+      <div class="scanner-result" id="scanner-result-text"></div>
+    </div>
+  </div>
+
+  <!-- Quantity Selector Modal (for sales) -->
+  <div id="modal-quantity" class="modal-overlay" style="display:none">
+    <div class="modal-sheet small">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <h2>Cantidad</h2>
+        <button class="modal-close" id="close-qty-modal">✕</button>
+      </div>
+      <div class="modal-body center">
+        <p id="qty-product-name" class="qty-product-name"></p>
+        <p class="qty-stock-info" id="qty-stock-info"></p>
+        <div class="qty-stepper">
+          <button class="qty-btn" id="qty-minus">−</button>
+          <input type="number" id="qty-value" value="1" min="1" class="qty-input" />
+          <button class="qty-btn" id="qty-plus">+</button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="cancel-qty-btn">Cancelar</button>
+        <button class="btn btn-primary" id="confirm-qty-btn">Agregar al Carrito</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast" style="display:none"></div>
+
+</body>
+
+</html>
